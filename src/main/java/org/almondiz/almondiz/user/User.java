@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.common.user;
+package org.almondiz.almondiz.user;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
