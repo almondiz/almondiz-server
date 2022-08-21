@@ -23,7 +23,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
             .antMatchers("/swagger-ui/index.html", "/h2-console", "/h2-console/*")
-            .antMatchers("/api/user/signin", "/api/user/signup");
+            .antMatchers("/api/user/signin", "/api/user/signup", "/api/users", "/api/user/*");
     }
 
     // 수정 필요
