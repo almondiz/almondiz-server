@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 
@@ -20,6 +21,7 @@ import org.almondiz.almondiz.common.TimeStamped;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "User_Table")
 public class User extends TimeStamped {
