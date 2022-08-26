@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.user;
+package org.almondiz.almondiz.user.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -21,7 +21,6 @@ import org.almondiz.almondiz.common.TimeStamped;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @Entity
 @Table(name = "User_Table")
 public class User extends TimeStamped {
@@ -41,6 +40,7 @@ public class User extends TimeStamped {
 
     private LocalDateTime deletedAt;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -54,4 +54,20 @@ public class User extends TimeStamped {
     private Long tagId;
 
     private Long nutId;
+
+    public User(Long userId, Long profileId, Long tagId, Long nutId){
+        this.userId = userId;
+        this.profileId = profileId;
+        this.tagId = tagId;
+        this.nutId = nutId;
+    }
+
+    public void update(Long profileId, Long tagId, Long nutId){
+        // tagId, nutId 참조 무결성 방어 코드 필요
+        this.profileId = profileId;
+        this.tagId = tagId;
+        this.nutId = nutId;
+    }
+
+
 }
