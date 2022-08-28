@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.common.user;
+package org.almondiz.almondiz.user.entity;
 
 public enum ProviderType {
     KAKAO,
