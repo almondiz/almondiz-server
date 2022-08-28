@@ -17,7 +17,7 @@ public class Notification {
     @Id
     // 상의할 필요
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "userId")
