@@ -1,7 +1,7 @@
 package org.almondiz.almondiz.notification;
 
 import lombok.*;
-import org.almondiz.almondiz.common.user.User;
+import org.almondiz.almondiz.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
