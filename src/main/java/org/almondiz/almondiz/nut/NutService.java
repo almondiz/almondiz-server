@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.nut;
 
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.exception.exception.NutNotFoundException;
@@ -13,6 +14,7 @@ public class NutService {
 
     private final NutRepository nutRepository;
 
+    @Transactional
     public String getNutNameById(Long nutId){
         String nutName = nutRepository.findById(nutId).orElseThrow(NutNotFoundException::new).getNutName();
         return nutName;
