@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.exception.exception.CNotificationNotFoundException;
 import org.almondiz.almondiz.exception.exception.CNotificationNotPermittedException;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
-    // private final UserService userService;
+    private final UserService userService;
 
     @Transactional
     public Optional<Notification> findById(Long notificationId) {
@@ -41,16 +42,13 @@ public class NotificationService {
 
     @Transactional
     public List<NotificationResponseDto> findAllByUser(String email) {
-        // 임시
-        User user = User.builder().build();
+        Optional<User> user = userService.findByEmail(email);
 
-        // Optional<User> user = userService.findByEmail(email);
+        if(user.isEmpty()){
+            throw new CUserNotFoundException();
+        }
 
-        // if(user.isEmpty()){
-        //     throw new CUserNotFoundException();
-        // }
-
-        return notificationRepository.findAllByUser(user)
+        return notificationRepository.findAllByUser(user.get())
                                      .stream()
                                      .map(notification -> new NotificationResponseDto(notification))
                                      .collect(Collectors.toList());
@@ -58,21 +56,21 @@ public class NotificationService {
 
     @Transactional
     public void read(String email, Long notificationId) {
-        // Optional<User> user = userService.findByEmail(email);
+        Optional<User> user = userService.findByEmail(email);
 
-        // if(user.isEmpty()){
-        //     throw new CUserNotFoundException();
-        // }
+        if(user.isEmpty()){
+            throw new CUserNotFoundException();
+        }
 
         Optional<Notification> notification = this.findById(notificationId);
 
-        // if(notification.isEmpty()){
-        //     throw new CNotificationNotFoundException();
-        // }
+        if(notification.isEmpty()){
+            throw new CNotificationNotFoundException();
+        }
 
-        // if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
-        //     throw new CNotificationNotPermittedException();
-        // }
+        if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
+            throw new CNotificationNotPermittedException();
+        }
 
         Notification readNotification = notification.get();
         readNotification.setRead(true);
@@ -81,21 +79,21 @@ public class NotificationService {
 
     @Transactional
     public void delete(String email, Long notificationId) {
-        // Optional<User> user = userService.findByEmail(email);
+        Optional<User> user = userService.findByEmail(email);
 
-        // if(user.isEmpty()){
-        //     throw new CUserNotFoundException();
-        // }
+        if(user.isEmpty()){
+            throw new CUserNotFoundException();
+        }
 
-        // Optional<Notification> notification = this.findById(notificationId);
+        Optional<Notification> notification = this.findById(notificationId);
 
-        // if(notification.isEmpty()){
-        //     throw new CNotificationNotFoundException();
-        // }
+        if(notification.isEmpty()){
+            throw new CNotificationNotFoundException();
+        }
 
-        // if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
-        //     throw new CNotificationNotPermittedException();
-        // }
+        if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
+            throw new CNotificationNotPermittedException();
+        }
 
         notificationRepository.deleteById(notificationId);
     }

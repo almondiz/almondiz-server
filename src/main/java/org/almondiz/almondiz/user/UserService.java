@@ -41,6 +41,11 @@ public class UserService {
     }
 
     @Transactional
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Transactional
     public List<UserResponseDto> getAllUsers(){
       return userRepository.findAll()
           .stream()
