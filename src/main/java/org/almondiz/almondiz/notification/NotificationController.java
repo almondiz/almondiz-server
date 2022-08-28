@@ -14,15 +14,15 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @GetMapping("/user/{userId}/notifications")
-    public CommonResult findByUsers() {
+    @GetMapping("/notifications")
+    public CommonResult findByUser() {
         // 임시
         String email = "";
 
         return  responseService.getListResult(notificationService.findAllByUser(email));
     }
 
-    @PatchMapping("/user/{userId}/notification/{notId}")
+    @PatchMapping("/notification/{notId}")
     public CommonResult readNotification(@PathVariable Long notId){
         // 임시
         String email = "";
@@ -31,7 +31,7 @@ public class NotificationController {
         return responseService.getSuccessResult();
     }
 
-    @DeleteMapping("/user/{userId}/notification/{notId}")
+    @DeleteMapping("/notification/{notId}")
     public CommonResult delete(@PathVariable Long notId) {
         // 임시
         String email = "";
