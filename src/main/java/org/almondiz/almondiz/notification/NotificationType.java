@@ -1,5 +1,8 @@
 package org.almondiz.almondiz.notification;
 
+import lombok.Getter;
+
+@Getter
 public enum NotificationType {
     // 임시 메세지
     ALERT("관련 알림이 도착했습니다"),
