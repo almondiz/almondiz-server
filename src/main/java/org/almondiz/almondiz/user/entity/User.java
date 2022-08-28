@@ -55,8 +55,8 @@ public class User extends TimeStamped {
 
     private Long nutId;
 
-    public User(Long userId, Long profileId, Long tagId, Long nutId){
-        this.userId = userId;
+    public User(String email, Long profileId, Long tagId, Long nutId){
+        this.email = email;
         this.profileId = profileId;
         this.tagId = tagId;
         this.nutId = nutId;

@@ -4,6 +4,7 @@ package org.almondiz.almondiz.user;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
@@ -23,15 +24,17 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public User signup(UserRegisterDto userRegisterDto){
-         Optional<User> exUser = userRepository.findById(userRegisterDto.getUserId());
+         Optional<User> exUser = userRepository.findByEmail(userRegisterDto.getEmail());
          if(exUser.isPresent()){
              throw new CAccountExistedException();
          }
-         User user = new User(userRegisterDto.getUserId(), userRegisterDto.getProfileId(), userRegisterDto.getTagId(), userRegisterDto.getNutId());
+         User user = new User(userRegisterDto.getEmail(), userRegisterDto.getProfileId(), userRegisterDto.getTagId(), userRegisterDto.getNutId());
          return userRepository.save(user);
     }
 
+    @Transactional
     public List<UserResponseDto> getAllUsers(){
       return userRepository.findAll()
           .stream()
@@ -39,11 +42,13 @@ public class UserService {
           .collect(Collectors.toList());
     }
 
+    @Transactional
     public UserResponseDto getUser(Long userId){
         User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
         return new UserResponseDto(user);
     }
 
+    @Transactional
     public UserResponseDto modifyUser(Long userId, UserRequestDto userRequestDto){
         User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
         user.update(userRequestDto.getProfileId(), userRequestDto.getTagId(), userRequestDto.getNutId());
@@ -51,6 +56,7 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
+    @Transactional
     public UserResponseDto deleteUser(Long userId){
         User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
         user.setStatus(Status.DELETED);
