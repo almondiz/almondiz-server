@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.common.user;
+package org.almondiz.almondiz.user.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 
@@ -39,6 +40,7 @@ public class User extends TimeStamped {
 
     private LocalDateTime deletedAt;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -52,4 +54,20 @@ public class User extends TimeStamped {
     private Long tagId;
 
     private Long nutId;
+
+    public User(String email, Long profileId, Long tagId, Long nutId){
+        this.email = email;
+        this.profileId = profileId;
+        this.tagId = tagId;
+        this.nutId = nutId;
+    }
+
+    public void update(Long profileId, Long tagId, Long nutId){
+        // tagId, nutId 참조 무결성 방어 코드 필요
+        this.profileId = profileId;
+        this.tagId = tagId;
+        this.nutId = nutId;
+    }
+
+
 }
