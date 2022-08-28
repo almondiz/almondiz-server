@@ -3,6 +3,7 @@ package org.almondiz.almondiz.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
@@ -31,8 +32,11 @@ public class UserService {
          return userRepository.save(user);
     }
 
-    public List<User> getAllUsers(){
-      return userRepository.findAll();
+    public List<UserResponseDto> getAllUsers(){
+      return userRepository.findAll()
+          .stream()
+          .map(user -> new UserResponseDto(user))
+          .collect(Collectors.toList());
     }
 
     public UserResponseDto getUser(Long userId){

@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping(value="/users")
     @ApiOperation(value = "모든 회원 조회")
-    public ListResult<User> findAllUsers() {
+    public ListResult<UserResponseDto> findAllUsers() {
         return responseService.getListResult(userService.getAllUsers());
     }
 
