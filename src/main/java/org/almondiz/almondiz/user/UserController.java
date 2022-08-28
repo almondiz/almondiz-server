@@ -41,20 +41,20 @@ public class UserController {
         return responseService.getListResult(userService.getAllUsers());
     }
 
-    @GetMapping(value="/user/{userId}")
+    @GetMapping(value="/user")
     @ApiOperation(value = "회원 정보 조회")
     public SingleResult<UserResponseDto> findUser(@PathVariable Long userId) {
         return responseService.getSingleResult(userService.getUser(userId));
     }
 
-    @DeleteMapping(value="/user/{userId}")
+    @DeleteMapping(value="/user")
     @ApiOperation(value = "회원 탈퇴")
     public CommonResult deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return responseService.getSuccessResult();
     }
 
-    @PatchMapping(value="/user/{userId}")
+    @PatchMapping(value="/user")
     @ApiOperation(value = "회원 정보 수정")
     public CommonResult modifyUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
         userService.modifyUser(userId, userRequestDto);
