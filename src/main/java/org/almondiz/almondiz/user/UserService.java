@@ -74,6 +74,21 @@ public class UserService {
         return getUser(userId);
     }
 
+    @Transactional
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
+    @Transactional
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Transactional
+    public String getNickName(User user) {
+        String nutName = nutService.getNutNameById(user.getNutId());
+        String tagName = tagService.getTagNameById(user.getTagId());
+        return tagName + " " + nutName;
+    }
 
 }
