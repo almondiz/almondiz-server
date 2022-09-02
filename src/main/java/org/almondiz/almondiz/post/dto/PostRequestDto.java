@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostRequestDto {
-    private Long postId;
     private Long storeId;
     private Clob title;
     private Clob content;

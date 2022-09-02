@@ -67,8 +67,8 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto modifyPost(PostRequestDto postRequestDto){
-        Post post = postRepository.findByPostId(postRequestDto.getPostId()).orElseThrow(PostNotFoundException::new);
+    public PostResponseDto modifyPost(Long postId, PostRequestDto postRequestDto){
+        Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
         post.update(postRequestDto);
         postRepository.save(post);
         return getPostByPostId(post.getPostId());
