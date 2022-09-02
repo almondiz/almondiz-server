@@ -2,6 +2,9 @@ package org.almondiz.almondiz.exception;
 
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.exception.exception.CFollowExistedException;
+import org.almondiz.almondiz.exception.exception.CFollowNotFoundException;
+import org.almondiz.almondiz.exception.exception.CFollowNotPermittedException;
 import org.almondiz.almondiz.exception.exception.CNotificationNotFoundException;
 import org.almondiz.almondiz.exception.exception.CNotificationNotPermittedException;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
@@ -30,6 +33,23 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 계정이 존재하지 않거나 잘못된 계정입니다.");
     }
 
+    @ExceptionHandler(CFollowExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult FollowExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("이미 존재하는 팔로우입니다.");
+    }
+
+    @ExceptionHandler(CFollowNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult FollowNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 팔로우가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(CFollowNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult FollowNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 팔로우에 접근할 수 없습니다.");
+    }
     @ExceptionHandler(CNotificationNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult NotificationNotFoundException(HttpServletRequest request, Exception e) {
