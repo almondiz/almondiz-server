@@ -3,6 +3,8 @@ package org.almondiz.almondiz.post.entity;
 import java.sql.Clob;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,7 +14,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
+import org.almondiz.almondiz.post.dto.PostRequestDto;
 
 @Builder
 @NoArgsConstructor
@@ -32,18 +36,26 @@ public class Post extends TimeStamped {
     @Column(nullable = false)
     private Long storeId;
 
-    @Setter
     @Column(nullable = false)
     private Clob title;
 
-    @Setter
     private Clob content;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
     public Post(Long userId, Long storeId, Clob title, Clob content){
         this.userId = userId;
         this.storeId = storeId;
         this.title = title;
         this.content = content;
+    }
+
+    public void update(PostRequestDto postRequestDto){
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
     }
 
 }
