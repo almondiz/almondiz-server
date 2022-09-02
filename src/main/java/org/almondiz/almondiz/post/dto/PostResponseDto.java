@@ -1,6 +1,5 @@
 package org.almondiz.almondiz.post.dto;
 
-import java.sql.Clob;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +14,8 @@ import org.almondiz.almondiz.store.entity.Store;
 @NoArgsConstructor
 public class PostResponseDto {
     private Long postId;
-    private Clob title;
-    private Clob content;
+    private String title;
+    private String content;
     private String nickName;
     private String storeName;
     private double lati;

@@ -63,12 +63,3 @@ public class UserController {
 
 }
 
-/**
-INSERT INTO NUT_TABLE VALUES (1, NOW(), NOW(), '캐슈넛');
-INSERT INTO TAG_TABLE VALUES (1, NOW(), NOW(), '마라탕');
-INSERT INTO PROFILE_FILE_TABLE VALUES (1, NOW(), NOW(), 'www.image.com');
-INSERT INTO USER_TABLE VALUES (1, NOW(), NOW(), NOW(), 'aaa@aaa.com', 1, 1, 'GOOGLE', 'USER', 'ALIVE', 1, 1);
-INSERT INTO STORE_TABLE VALUES (1, NOW(), NOW(), '수원시 영통구', 1, '031-111-1111', 1.3, 1.3, 1, '맥도날드');
-INSERT INTO POST_FILE_TABLE VALUES (1, NOW(), NOW(),'www.image.com', 1, 'type');
-INSERT INTO POST_TABLE VALUES (1, NOW(), NOW(), 'abcd', 'ALIVE', 1, 'title', 1);
- */

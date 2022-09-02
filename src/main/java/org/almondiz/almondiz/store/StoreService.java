@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StoreService {
 
-    private StoreRepository storeRepository;
+    private final StoreRepository storeRepository;
 
     @Transactional
     public Store getStoreById(Long storeId){

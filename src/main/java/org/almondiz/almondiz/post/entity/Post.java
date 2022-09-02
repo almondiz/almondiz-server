@@ -1,6 +1,5 @@
 package org.almondiz.almondiz.post.entity;
 
-import java.sql.Clob;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -37,20 +36,21 @@ public class Post extends TimeStamped {
     private Long storeId;
 
     @Column(nullable = false)
-    private Clob title;
+    private String title;
 
-    private Clob content;
+    private String content;
 
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
 
-    public Post(Long userId, Long storeId, Clob title, Clob content){
+    public Post(Long userId, Long storeId, String title, String content){
         this.userId = userId;
         this.storeId = storeId;
         this.title = title;
         this.content = content;
+        this.status = Status.ALIVE;
     }
 
     public void update(PostRequestDto postRequestDto){
