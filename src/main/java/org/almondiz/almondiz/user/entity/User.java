@@ -43,8 +43,6 @@ public class User extends TimeStamped implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    private String token;
-
     private LocalDateTime deletedAt;
 
     @Setter
@@ -62,11 +60,14 @@ public class User extends TimeStamped implements UserDetails {
 
     private Long nutId;
 
-    public User(String email, Long profileId, Long tagId, Long nutId){
+    public User(String email, Long profileId, Long tagId, Long nutId, ProviderType providerType, Role role){
         this.email = email;
         this.profileId = profileId;
         this.tagId = tagId;
         this.nutId = nutId;
+        this.providerType = providerType;
+        this.status = Status.ALIVE;
+        this.role = role;
     }
 
     public void update(Long profileId, Long tagId, Long nutId){
