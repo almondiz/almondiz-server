@@ -34,7 +34,7 @@ public class UserController {
 
     private final AuthService authService;
 
-    @GetMapping(value = "/user/login")
+    @PostMapping(value = "/user/login")
     @ApiOperation(value = "로그인")
     public CommonResult logIn(@RequestBody UserLogInDto logInDto){
         Token token = authService.signIn(logInDto.getUserEmail());
