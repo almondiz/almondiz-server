@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.common.ValidStringUtils;
 import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.nut.NutService;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
@@ -60,30 +61,30 @@ public class AuthService implements UserDetailsService {
     private final JWTVerifier jwtVerifier = JWT.require(algorithm).withIssuer(TOKEN_ISSUER).build();
 
     @Override
-    public UserDetails loadUserByUsername(String userEmail){
+    public UserDetails loadUserByUsername(String userEmail) {
         return userService.findByEmail(userEmail).orElseThrow(CUserNotFoundException::new);
     }
 
-    public Token signIn(String userEmail){
+    public Token signIn(String userEmail) {
         userService.findByEmail(userEmail).orElseThrow(CUserNotFoundException::new);
         return createToken(userEmail);
     }
 
     @Transactional
-    public Token signup(UserRegisterDto userRegisterDto){
-        if(userService.findByEmail(userRegisterDto.getEmail()).isPresent()){
+    public Token signup(UserRegisterDto userRegisterDto) {
+        if (nonNull(ValidStringUtils.getValidEmail(userRegisterDto.getEmail())) && userService.findByEmail(userRegisterDto.getEmail()).isPresent()) {
             throw new CAccountExistedException();
         }
 
-        if(profileFileService.getFileUrlById(userRegisterDto.getProfileId()).isEmpty()){
+        if (profileFileService.getFileUrlById(userRegisterDto.getProfileId()).isEmpty()) {
             throw new ProfileFileNotFoundException();
         }
 
-        if(tagService.getTagNameById(userRegisterDto.getTagId()).isEmpty()){
+        if (tagService.getTagNameById(userRegisterDto.getTagId()).isEmpty()) {
             throw new TagNotFoundException();
         }
 
-        if(nutService.getNutNameById(userRegisterDto.getNutId()).isEmpty()){
+        if (nutService.getNutNameById(userRegisterDto.getNutId()).isEmpty()) {
             throw new NutNotFoundException();
         }
 
@@ -137,7 +138,7 @@ public class AuthService implements UserDetailsService {
                 String newAccessToken = createAccessToken(userEmail, now);
                 String newRefreshToken = refreshToken;
                 if (decodedJWT.getExpiresAt()
-                              .before(new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)))) {
+                              .before(new Date(now.getTime() + (1000L * 60 * 60 * 24 * 30)))) {
                     newRefreshToken = createRefreshToken(userEmail, now);
                 }
                 return Token.builder()
@@ -167,7 +168,7 @@ public class AuthService implements UserDetailsService {
     private Optional<DecodedJWT> getDecodedToken(String token) {
         try {
             return Optional.of(jwtVerifier.verify(token));
-        }catch (JWTVerificationException ex) {
+        } catch (JWTVerificationException ex) {
             return Optional.empty();
         }
     }
@@ -180,7 +181,7 @@ public class AuthService implements UserDetailsService {
     public boolean validateToken(String token) {
         Date now = new Date();
         Optional<DecodedJWT> decodedJWT = getDecodedToken(token);
-        if(decodedJWT.isEmpty()){
+        if (decodedJWT.isEmpty()) {
             return false;
         }
 

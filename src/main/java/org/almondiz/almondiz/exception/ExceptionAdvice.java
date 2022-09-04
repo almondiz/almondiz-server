@@ -87,4 +87,9 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("보유한 권한으로 접근할 수 없는 리소스입니다.");
     }
 
+    @ExceptionHandler(CNotValidEmailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult NotValidEmailException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("옳지 않은 이메일입니다. 이메일 형식을 확인해주세요");
+    }
 }
