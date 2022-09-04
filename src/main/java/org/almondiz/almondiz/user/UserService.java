@@ -8,12 +8,10 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CAccountExistedException;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.nut.NutService;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.tag.TagService;
-import org.almondiz.almondiz.user.dto.UserRegisterDto;
 import org.almondiz.almondiz.user.dto.UserRequestDto;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.entity.User;
@@ -54,19 +52,29 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto modifyUser(Long userId, UserRequestDto userRequestDto){
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
-        user.update(userRequestDto.getProfileId(), userRequestDto.getTagId(), userRequestDto.getNutId());
-        userRepository.save(user);
-        return getUser(userId);
+    public UserResponseDto getUserByEmail(String email){
+        User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        String profileImgUrl = profileFileService.getFileUrlById(user.getProfileId());
+        String nutName = nutService.getNutNameById(user.getNutId());
+        String tagName = tagService.getTagNameById(user.getTagId());
+        String nickName = tagName + " " + nutName;
+        return new UserResponseDto(user, profileImgUrl, nickName);
     }
 
     @Transactional
-    public UserResponseDto deleteUser(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+    public UserResponseDto modifyUser(String email, UserRequestDto userRequestDto){
+        User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        user.update(userRequestDto.getProfileId(), userRequestDto.getTagId(), userRequestDto.getNutId());
+        userRepository.save(user);
+        return getUser(user.getUserId());
+    }
+
+    @Transactional
+    public UserResponseDto deleteUserByEmail(String email){
+        User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
         user.setStatus(Status.DELETED);
         userRepository.save(user);
-        return getUser(userId);
+        return getUser(user.getUserId());
     }
 
     @Transactional
