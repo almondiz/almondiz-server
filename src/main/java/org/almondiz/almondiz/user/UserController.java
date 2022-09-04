@@ -7,9 +7,11 @@ import org.almondiz.almondiz.response.CommonResult;
 import org.almondiz.almondiz.response.ListResult;
 import org.almondiz.almondiz.response.ResponseService;
 import org.almondiz.almondiz.response.SingleResult;
+import org.almondiz.almondiz.user.dto.UserLogInDto;
 import org.almondiz.almondiz.user.dto.UserRegisterDto;
 import org.almondiz.almondiz.user.dto.UserRequestDto;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
+import org.almondiz.almondiz.user.entity.Token;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +30,20 @@ public class UserController {
     private final ResponseService responseService;
     private final UserService userService;
 
+    private final AuthService authService;
+
+    @GetMapping(value = "/user/login")
+    @ApiOperation(value = "로그인")
+    public CommonResult logIn(@RequestBody UserLogInDto logInDto){
+        Token token = authService.signIn(logInDto.getUserEmail());
+        return responseService.getSingleResult(token);
+    }
+
     @PostMapping(value="/user")
     @ApiOperation(value = "회원가입")
     public CommonResult createUser(@RequestBody UserRegisterDto userRegisterDto){
-        User user = userService.signup(userRegisterDto);
-        return responseService.getSuccessResult();
+        Token token = authService.signup(userRegisterDto);
+        return responseService.getSingleResult(token);
     }
 
     @GetMapping(value="/users")

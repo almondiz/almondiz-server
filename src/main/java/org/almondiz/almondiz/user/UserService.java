@@ -31,16 +31,6 @@ public class UserService {
     private final TagService tagService;
 
     @Transactional
-    public User signup(UserRegisterDto userRegisterDto){
-         Optional<User> exUser = userRepository.findByEmail(userRegisterDto.getEmail());
-         if(exUser.isPresent()){
-             throw new CAccountExistedException();
-         }
-         User user = new User(userRegisterDto.getEmail(), userRegisterDto.getProfileId(), userRegisterDto.getTagId(), userRegisterDto.getNutId());
-         return userRepository.save(user);
-    }
-
-    @Transactional
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -80,6 +70,11 @@ public class UserService {
     }
 
     @Transactional
+    public User saveUser(User user){
+        return userRepository.save(user);
+    }
+
+    @Transactional
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
@@ -90,5 +85,4 @@ public class UserService {
         String tagName = tagService.getTagNameById(user.getTagId());
         return tagName + " " + nutName;
     }
-
 }
