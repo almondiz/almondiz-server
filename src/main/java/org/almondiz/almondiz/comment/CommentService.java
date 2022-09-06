@@ -35,11 +35,13 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto create(Long userId, Long postId, CommentRequestDto commentRequestDto){
+
         Post post = postService.findPostByPostId(postId);
         User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
 
         Comment comment = Comment.builder()
                                  .text(commentRequestDto.getText())
+                                 .status(Status.ALIVE)
                                  .post(post)
                                  .user(user)
                                  .build();
