@@ -12,7 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.almondiz.almondiz.category.entity.Category;
 import org.almondiz.almondiz.common.TimeStamped;
+import org.almondiz.almondiz.user.entity.User;
 
 @Builder
 @NoArgsConstructor
@@ -29,13 +31,13 @@ public class Store extends TimeStamped {
     @Column(nullable = false)
     private String storeName;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "ownerId")
-    private Long ownerId;
+    private User owner;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Category.class)
     @JoinColumn(name = "categoryId")
-    private Long categoryId;
+    private Category category;
 
     private double lati;
     private double longi;

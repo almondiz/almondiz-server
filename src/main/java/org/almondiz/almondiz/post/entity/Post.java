@@ -18,6 +18,8 @@ import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
+import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.user.entity.User;
 
 @Builder
 @NoArgsConstructor
@@ -31,13 +33,13 @@ public class Post extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "userId")
-    private Long userId;
+    private User user;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Store.class)
     @JoinColumn(name = "storeId")
-    private Long storeId;
+    private Store store;
 
     @Column(nullable = false)
     private String title;
@@ -48,14 +50,6 @@ public class Post extends TimeStamped {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-
-    public Post(Long userId, Long storeId, String title, String content){
-        this.userId = userId;
-        this.storeId = storeId;
-        this.title = title;
-        this.content = content;
-        this.status = Status.ALIVE;
-    }
 
     public void update(PostRequestDto postRequestDto){
         this.title = postRequestDto.getTitle();

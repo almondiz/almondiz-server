@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping(value="/user")
     @ApiOperation(value = "회원가입")
     public CommonResult createUser(@RequestBody UserRegisterDto userRegisterDto){
-        User user = userService.signup(userRegisterDto);
+        userService.signup(userRegisterDto);
         return responseService.getSuccessResult();
     }
 

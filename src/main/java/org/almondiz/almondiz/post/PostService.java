@@ -1,11 +1,13 @@
 package org.almondiz.almondiz.post;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
+import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -15,6 +17,7 @@ import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.store.StoreService;
 import org.almondiz.almondiz.store.entity.Store;
 import org.almondiz.almondiz.user.UserService;
+import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +34,16 @@ public class PostService {
     public PostResponseDto createPost(PostRequestDto postRequestDto){
         // user id 임시값 - userId 가져오는 과정 추가 필요
         Long userId = Long.valueOf(1);
-        Post post = new Post(userId, postRequestDto.getStoreId(), postRequestDto.getTitle(), postRequestDto.getContent());
+        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+        Store store = storeService.getStoreById(postRequestDto.getStoreId());
+        Post post = Post.builder()
+                        .user(user)
+                        .store(store)
+                        .title(postRequestDto.getTitle())
+                        .content(postRequestDto.getContent())
+                        .status(Status.ALIVE)
+                        .build();
+
         return getPostByPostId(postRepository.save(post).getPostId());
     }
 
@@ -44,23 +56,33 @@ public class PostService {
     }
 
     @Transactional
+    public Post findPostByPostId(Long postId){
+        return postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+    }
+
+    @Transactional
     public PostResponseDto getPostByPostId(Long postId){
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
-        String nickName = userService.getNickName(post.getUserId());
-        Store store = storeService.getStoreById(post.getStoreId());
-        List<String> postFileImgUrls = postFileService.getFileUrlsByPostId(postId);
+        String nickName = userService.getNickName(post.getUser());
+        Store store = post.getStore();
+        List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
+
         return new PostResponseDto(post, nickName, store, postFileImgUrls);
     }
     @Transactional
     public List<PostResponseDto> getPostsByUserId(Long userId){
-        return postRepository.findByUserId(userId)
+        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+
+        return postRepository.findByUser(user)
             .stream()
             .map(post -> getPostByPostId(post.getPostId()))
             .collect(Collectors.toList());
     }
     @Transactional
     public List<PostResponseDto> getPostsByStoreId(Long storeId){
-        return postRepository.findByStoreId(storeId)
+        Store store = storeService.getStoreById(storeId);
+
+        return postRepository.findByStore(store)
             .stream()
             .map(post -> getPostByPostId(post.getPostId()))
             .collect(Collectors.toList());
@@ -71,6 +93,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
         post.update(postRequestDto);
         postRepository.save(post);
+
         return getPostByPostId(post.getPostId());
     }
 
@@ -79,6 +102,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
         post.setStatus(Status.DELETED);
         postRepository.save(post);
+
         return getPostByPostId(post.getPostId());
     }
 

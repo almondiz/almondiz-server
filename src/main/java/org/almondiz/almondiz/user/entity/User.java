@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
+import org.almondiz.almondiz.nut.entity.Nut;
+import org.almondiz.almondiz.profileFile.entity.ProfileFile;
+import org.almondiz.almondiz.tag.entity.Tag;
 
 @Builder
 @NoArgsConstructor
@@ -51,30 +54,30 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = ProfileFile.class)
     @JoinColumn(name = "profileId")
-    private Long profileId;
+    private ProfileFile profileFile;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Tag.class)
     @JoinColumn(name = "tagId")
-    private Long tagId;
+    private Tag tag;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Nut.class)
     @JoinColumn(name = "nutId")
-    private Long nutId;
+    private Nut nut;
 
-    public User(String email, Long profileId, Long tagId, Long nutId){
+    public User(String email, ProfileFile profileFile, Tag tag, Nut nut){
         this.email = email;
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
     }
 
-    public void update(Long profileId, Long tagId, Long nutId){
+    public void update(ProfileFile profileFile, Tag tag, Nut nut){
         // tagId, nutId 참조 무결성 방어 코드 필요
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
     }
 
 
