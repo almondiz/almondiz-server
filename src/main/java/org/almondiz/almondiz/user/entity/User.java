@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,10 +51,16 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "profileId")
     private Long profileId;
 
+    @ManyToOne
+    @JoinColumn(name = "tagId")
     private Long tagId;
 
+    @ManyToOne
+    @JoinColumn(name = "nutId")
     private Long nutId;
 
     public User(String email, Long profileId, Long tagId, Long nutId){

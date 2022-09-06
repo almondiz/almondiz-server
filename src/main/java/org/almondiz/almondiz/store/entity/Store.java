@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,12 +26,15 @@ public class Store extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
+    @Column(nullable = false)
     private String storeName;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ownerId")
     private Long ownerId;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "categoryId")
     private Long categoryId;
 
     private double lati;

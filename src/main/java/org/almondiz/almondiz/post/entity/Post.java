@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,10 +31,12 @@ public class Post extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "userId")
     private Long userId;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "storeId")
     private Long storeId;
 
     @Column(nullable = false)
