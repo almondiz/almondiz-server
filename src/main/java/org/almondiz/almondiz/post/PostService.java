@@ -21,6 +21,7 @@ import org.almondiz.almondiz.store.StoreService;
 import org.almondiz.almondiz.store.entity.Store;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
+import org.almondiz.almondiz.tagpost.TagPostService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,8 @@ public class PostService {
     private final StoreService storeService;
     private final PostFileService postFileService;
     private final TagService tagService;
+
+    private final TagPostService tagPostService;
 
     // 순환 참조 문제 해결을 위해 repository 직접 사용
     private final CommentRepository commentRepository;
@@ -78,7 +81,7 @@ public class PostService {
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
         String userProfileImgUrl = user.getProfileFile().getFileUrl();
         List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
-        List<TagResponseDto> tagList = tagService.getTagsByPost(post);
+        List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
 
         return new PostResponseDto(post, nickName, store, postFileImgUrls, userProfileImgUrl, commentList, tagList);
     }
