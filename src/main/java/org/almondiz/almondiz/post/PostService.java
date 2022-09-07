@@ -1,13 +1,16 @@
 package org.almondiz.almondiz.post;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.almondiz.almondiz.comment.dto.CommentResponseDto;
+import org.almondiz.almondiz.comment.entity.Comment;
+import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -16,6 +19,8 @@ import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.store.StoreService;
 import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.tag.TagService;
+import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,10 @@ public class PostService {
     private final UserService userService;
     private final StoreService storeService;
     private final PostFileService postFileService;
+    private final TagService tagService;
+
+    // 순환 참조 문제 해결을 위해 repository 직접 사용
+    private final CommentRepository commentRepository;
 
     @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto){
@@ -51,7 +60,7 @@ public class PostService {
     public List<PostResponseDto> getAllPosts(){
         return postRepository.findAll()
             .stream()
-            .map(post -> getPostByPostId(post.getPostId()))
+            .map(post -> this.getPostByPostId(post.getPostId()))
             .collect(Collectors.toList());
     }
 
@@ -63,11 +72,15 @@ public class PostService {
     @Transactional
     public PostResponseDto getPostByPostId(Long postId){
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
-        String nickName = userService.getNickName(post.getUser());
+        User user = post.getUser();
+        String nickName = userService.getNickName(user);
         Store store = post.getStore();
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
+        String userProfileImgUrl = user.getProfileFile().getFileUrl();
+        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
+        List<TagResponseDto> tagList = tagService.getTagsByPost(post);
 
-        return new PostResponseDto(post, nickName, store, postFileImgUrls);
+        return new PostResponseDto(post, nickName, store, postFileImgUrls, userProfileImgUrl, commentList, tagList);
     }
     @Transactional
     public List<PostResponseDto> getPostsByUserId(Long userId){
@@ -75,7 +88,7 @@ public class PostService {
 
         return postRepository.findByUser(user)
             .stream()
-            .map(post -> getPostByPostId(post.getPostId()))
+            .map(post -> this.getPostByPostId(post.getPostId()))
             .collect(Collectors.toList());
     }
     @Transactional
@@ -84,7 +97,7 @@ public class PostService {
 
         return postRepository.findByStore(store)
             .stream()
-            .map(post -> getPostByPostId(post.getPostId()))
+            .map(post -> this.getPostByPostId(post.getPostId()))
             .collect(Collectors.toList());
     }
 
@@ -94,7 +107,7 @@ public class PostService {
         post.update(postRequestDto);
         postRepository.save(post);
 
-        return getPostByPostId(post.getPostId());
+        return this.getPostByPostId(post.getPostId());
     }
 
     @Transactional
@@ -103,7 +116,23 @@ public class PostService {
         post.setStatus(Status.DELETED);
         postRepository.save(post);
 
-        return getPostByPostId(post.getPostId());
+        return this.getPostByPostId(post.getPostId());
+    }
+
+    @Transactional
+    public List<CommentResponseDto> findCommentsByPostId(Long postId){
+        Post post = this.findPostByPostId(postId);
+        return commentRepository.findByPost(post)
+            .stream().map(comment -> this.getCommentResponseDto(comment.getCommentId()))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CommentResponseDto getCommentResponseDto(Long commentId){
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+            CommentNotFoundException::new);
+        String nickName = userService.getNickName(comment.getUser());
+        return new CommentResponseDto(comment, nickName);
     }
 
 
