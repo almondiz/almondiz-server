@@ -60,7 +60,7 @@ public class FollowService {
                                                                  .followId(follow.getId())
                                                                  .followerId(follow.getFollower().getUserId())
                                                                  .followerNickName(userService.getNickName(follow.getFollower()))
-                                                                 .followerProfileImg(profileFileService.getFileUrlById(follow.getFollower().getProfileId()))
+                                                                 .followerProfileImg(profileFileService.getFileUrlById(follow.getFollower().getProfileFile().getFileId()))
                                                                  .createdAt(follow.getCreatedAt())
                                                                  .build()
                                ).collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class FollowService {
                                                                   .followId(follow.getId())
                                                                   .followingId(follow.getFollowee().getUserId())
                                                                   .followingNickName(userService.getNickName(follow.getFollowee()))
-                                                                  .followingProfileImg(profileFileService.getFileUrlById(follow.getFollowee().getProfileId()))
+                                                                  .followingProfileImg(profileFileService.getFileUrlById(follow.getFollowee().getProfileFile().getFileId()))
                                                                   .alias(follow.getAlias())
                                                                   .createdAt(follow.getCreatedAt())
                                                                   .build())

@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
+import org.almondiz.almondiz.nut.entity.Nut;
+import org.almondiz.almondiz.profileFile.entity.ProfileFile;
+import org.almondiz.almondiz.tag.entity.Tag;
 
 @Builder
 @NoArgsConstructor
@@ -49,24 +54,30 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private Role role;
 
-    private Long profileId;
+    @ManyToOne(targetEntity = ProfileFile.class)
+    @JoinColumn(name = "profileId")
+    private ProfileFile profileFile;
 
-    private Long tagId;
+    @ManyToOne(targetEntity = Tag.class)
+    @JoinColumn(name = "tagId")
+    private Tag tag;
 
-    private Long nutId;
+    @ManyToOne(targetEntity = Nut.class)
+    @JoinColumn(name = "nutId")
+    private Nut nut;
 
-    public User(String email, Long profileId, Long tagId, Long nutId){
+    public User(String email, ProfileFile profileFile, Tag tag, Nut nut){
         this.email = email;
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
     }
 
-    public void update(Long profileId, Long tagId, Long nutId){
+    public void update(ProfileFile profileFile, Tag tag, Nut nut){
         // tagId, nutId 참조 무결성 방어 코드 필요
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
     }
 
 
