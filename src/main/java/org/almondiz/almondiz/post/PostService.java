@@ -22,8 +22,8 @@ import org.almondiz.almondiz.store.entity.Store;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.tagpost.TagPostService;
-import org.almondiz.almondiz.user.UserService;
-import org.almondiz.almondiz.user.entity.User;
+import org.almondiz.almondiz.response.user.UserService;
+import org.almondiz.almondiz.response.user.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service

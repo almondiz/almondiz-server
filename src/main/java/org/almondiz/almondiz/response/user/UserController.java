@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.user;
+package org.almondiz.almondiz.response.user;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -7,10 +7,9 @@ import org.almondiz.almondiz.response.CommonResult;
 import org.almondiz.almondiz.response.ListResult;
 import org.almondiz.almondiz.response.ResponseService;
 import org.almondiz.almondiz.response.SingleResult;
-import org.almondiz.almondiz.user.dto.UserRegisterDto;
-import org.almondiz.almondiz.user.dto.UserRequestDto;
-import org.almondiz.almondiz.user.dto.UserResponseDto;
-import org.almondiz.almondiz.user.entity.User;
+import org.almondiz.almondiz.response.user.dto.UserResponseDto;
+import org.almondiz.almondiz.response.user.dto.UserRegisterDto;
+import org.almondiz.almondiz.response.user.dto.UserRequestDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

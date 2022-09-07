@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.user;
+package org.almondiz.almondiz.response.user;
 
 
 import java.util.List;
@@ -14,13 +14,13 @@ import org.almondiz.almondiz.nut.NutService;
 import org.almondiz.almondiz.nut.entity.Nut;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.profileFile.entity.ProfileFile;
+import org.almondiz.almondiz.response.user.dto.UserResponseDto;
+import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.response.user.entity.UserRepository;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.entity.Tag;
-import org.almondiz.almondiz.user.dto.UserRegisterDto;
-import org.almondiz.almondiz.user.dto.UserRequestDto;
-import org.almondiz.almondiz.user.dto.UserResponseDto;
-import org.almondiz.almondiz.user.entity.User;
-import org.almondiz.almondiz.user.entity.UserRepository;
+import org.almondiz.almondiz.response.user.dto.UserRegisterDto;
+import org.almondiz.almondiz.response.user.dto.UserRequestDto;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,6 @@
 package org.almondiz.almondiz.follow;
 
-import org.almondiz.almondiz.user.entity.User;
+import org.almondiz.almondiz.response.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

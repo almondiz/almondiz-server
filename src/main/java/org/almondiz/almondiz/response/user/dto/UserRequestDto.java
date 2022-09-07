@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.user.dto;
+package org.almondiz.almondiz.response.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
