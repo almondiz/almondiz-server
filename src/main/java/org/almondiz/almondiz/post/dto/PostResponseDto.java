@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.post.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class PostResponseDto {
     private double lati;
     private double longi;
     private List<String> postFileImgUrls;
+    private LocalDateTime createdAt;
 
     public PostResponseDto(Post post, String nickName, Store store, List<String> postFileImgUrls){
         this.postId = post.getPostId();
@@ -31,6 +33,7 @@ public class PostResponseDto {
         this.lati = store.getLati();
         this.longi = store.getLongi();
         this.postFileImgUrls = postFileImgUrls;
+        this.createdAt = post.getCreatedAt();
     }
 
 }
