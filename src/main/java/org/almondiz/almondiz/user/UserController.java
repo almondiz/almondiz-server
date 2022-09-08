@@ -91,9 +91,3 @@ public class UserController {
 
 }
 
-/**
-INSERT INTO USER_TABLE VALUES (1, NOW(), NOW(), NOW(), 'aaa@aaa.com', 1, 1, 'GOOGLE', 'USER', 'ALIVE', 1, 1);
-INSERT INTO NUT_TABLE VALUES (1, NOW(), NOW(), '캐슈넛');
-INSERT INTO TAG_TABLE VALUES (1, NOW(), NOW(), '마라탕');
-INSERT INTO PROFILE_FILE_TABLE VALUES (1, NOW(), NOW(), 'www.image.com');
- */

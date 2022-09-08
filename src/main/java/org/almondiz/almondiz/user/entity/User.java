@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,9 @@ import org.almondiz.almondiz.common.TimeStamped;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.almondiz.almondiz.nut.entity.Nut;
+import org.almondiz.almondiz.profileFile.entity.ProfileFile;
+import org.almondiz.almondiz.tag.entity.Tag;
 
 @Builder
 @NoArgsConstructor
@@ -54,11 +59,17 @@ public class User extends TimeStamped implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    private Long profileId;
+    @ManyToOne(targetEntity = ProfileFile.class)
+    @JoinColumn(name = "profileId")
+    private ProfileFile profileFile;
 
-    private Long tagId;
+    @ManyToOne(targetEntity = Tag.class)
+    @JoinColumn(name = "tagId")
+    private Tag tag;
 
-    private Long nutId;
+    @ManyToOne(targetEntity = Nut.class)
+    @JoinColumn(name = "nutId")
+    private Nut nut;
 
     public User(String email, Long profileId, Long tagId, Long nutId, ProviderType providerType, Role role){
         this.email = email;

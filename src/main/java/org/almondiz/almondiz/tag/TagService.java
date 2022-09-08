@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.almondiz.almondiz.exception.exception.TagNotFoundException;
+import org.almondiz.almondiz.tag.entity.Tag;
 import org.almondiz.almondiz.tag.entity.TagRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,13 @@ public class TagService {
 
     @Transactional
     public String getTagNameById(Long tagId){
-        String tagName = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new).getTagName();
-        return tagName;
+        return this.getTagById(tagId).getTagName();
+    }
+
+    @Transactional
+    public Tag getTagById(Long tagId){
+        Tag tag = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
+        return tag;
     }
 
 }
