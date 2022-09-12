@@ -15,7 +15,6 @@ import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.profileFile.entity.ProfileFile;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.entity.Tag;
-import org.almondiz.almondiz.user.dto.UserRegisterDto;
 import org.almondiz.almondiz.user.dto.UserRequestDto;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.entity.User;
@@ -58,22 +57,21 @@ public class UserService {
     @Transactional
     public UserResponseDto getUserByEmail(String email){
         User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
-        String profileImgUrl = profileFileService.getFileUrlById(user.getProfileId());
-        String nutName = nutService.getNutNameById(user.getNutId());
-        String tagName = tagService.getTagNameById(user.getTagId());
+        String nutName = user.getNut().getNutName();
+        String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
-        return new UserResponseDto(user, profileImgUrl, nickName);
+        return new UserResponseDto(user, user.getProfileFile().getFileUrl(), nickName);
     }
 	
 	@Transactional
-    public UserResponseDto modifyUser(Long userId, UserRequestDto userRequestDto){
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+    public UserResponseDto modifyUser(String email, UserRequestDto userRequestDto){
+        User user = userRepository.findByEmail(email).orElseThrow(CUserNotFoundException::new);
         ProfileFile profileFile = profileFileService.getProfileFileById(userRequestDto.getProfileId());
         Tag tag = tagService.getTagById(userRequestDto.getTagId());
         Nut nut = nutService.getNutById(userRequestDto.getNutId());
         user.update(profileFile, tag, nut);
         userRepository.save(user);
-        return this.getUser(userId);
+        return this.getUser(user.getUserId());
     }
 
     @Transactional

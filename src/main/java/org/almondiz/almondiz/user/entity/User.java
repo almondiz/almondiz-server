@@ -71,20 +71,20 @@ public class User extends TimeStamped implements UserDetails {
     @JoinColumn(name = "nutId")
     private Nut nut;
 
-    public User(String email, Long profileId, Long tagId, Long nutId, ProviderType providerType, Role role){
+    public User(String email, ProfileFile profileFile, Tag tag, Nut nut, ProviderType providerType, Role role){
         this.email = email;
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
         this.providerType = providerType;
         this.status = Status.ALIVE;
         this.role = role;
     }
 
-    public void update(Long profileId, Long tagId, Long nutId){
-        this.profileId = profileId;
-        this.tagId = tagId;
-        this.nutId = nutId;
+    public void update(ProfileFile profileFile, Tag tag, Nut nut){
+        this.profileFile = profileFile;
+        this.tag = tag;
+        this.nut = nut;
     }
 
 

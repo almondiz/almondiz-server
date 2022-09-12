@@ -9,8 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.common.ValidStringUtils;
 import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.nut.NutService;
+import org.almondiz.almondiz.nut.entity.Nut;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
+import org.almondiz.almondiz.profileFile.entity.ProfileFile;
 import org.almondiz.almondiz.tag.TagService;
+import org.almondiz.almondiz.tag.entity.Tag;
 import org.almondiz.almondiz.user.dto.UserRegisterDto;
 import org.almondiz.almondiz.user.entity.ProviderType;
 import org.almondiz.almondiz.user.entity.Role;
@@ -76,19 +79,13 @@ public class AuthService implements UserDetailsService {
             throw new CAccountExistedException();
         }
 
-        if (profileFileService.getFileUrlById(userRegisterDto.getProfileId()).isEmpty()) {
-            throw new ProfileFileNotFoundException();
-        }
+        ProfileFile profileFile = profileFileService.getProfileFileById(userRegisterDto.getProfileId());
 
-        if (tagService.getTagNameById(userRegisterDto.getTagId()).isEmpty()) {
-            throw new TagNotFoundException();
-        }
+        Tag tag = tagService.getTagById(userRegisterDto.getTagId());
 
-        if (nutService.getNutNameById(userRegisterDto.getNutId()).isEmpty()) {
-            throw new NutNotFoundException();
-        }
+        Nut nut = nutService.getNutById(userRegisterDto.getNutId());
 
-        User user = new User(userRegisterDto.getEmail(), userRegisterDto.getProfileId(), userRegisterDto.getTagId(), userRegisterDto.getNutId(), ProviderType.GOOGLE, Role.USER);
+        User user = new User(userRegisterDto.getEmail(),profileFile, tag, nut, ProviderType.GOOGLE, Role.USER);
         userService.saveUser(user);
         return createToken(user.getEmail());
     }
