@@ -2,12 +2,7 @@ package org.almondiz.almondiz.exception;
 
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.almondiz.almondiz.exception.exception.CFollowExistedException;
-import org.almondiz.almondiz.exception.exception.CFollowNotFoundException;
-import org.almondiz.almondiz.exception.exception.CFollowNotPermittedException;
-import org.almondiz.almondiz.exception.exception.CNotificationNotFoundException;
-import org.almondiz.almondiz.exception.exception.CNotificationNotPermittedException;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.response.CommonResult;
 import org.almondiz.almondiz.response.ResponseService;
 import org.springframework.http.HttpStatus;
@@ -62,4 +57,39 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 권한으로 알림에 접근할 수 없습니다.");
     }
 
+    @ExceptionHandler(CRefreshTokenException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult RefreshTokenException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("잘못된 Refresh 토큰입니다. 다시 입력해주세요.");
+    }
+
+    @ExceptionHandler(CExpiredTokenException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ExpiredTokenException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("만료된 토큰입니다. 다시 입력해주세요.");
+    }
+
+    @ExceptionHandler(CTokenUserNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult TokenUserNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("토큰에 해당하는 계정이 존재하지 않거나 잘못된 계정입니다.");
+    }
+
+    @ExceptionHandler(CAuthenticationEntryPointException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult authenticationEntryPointException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 리소스에 접근하기 위한 권한이 없습니다.");
+    }
+
+    @ExceptionHandler(CAccessDeniedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult accessDeniedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("보유한 권한으로 접근할 수 없는 리소스입니다.");
+    }
+
+    @ExceptionHandler(CNotValidEmailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult NotValidEmailException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("옳지 않은 이메일입니다. 이메일 형식을 확인해주세요");
+    }
 }

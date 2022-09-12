@@ -1,6 +1,7 @@
 package org.almondiz.almondiz.config.security;
 
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.user.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +20,8 @@ public class SecurityConfig {
 
     private final CorsConfig corsConfig;
 
-    // 수정 필요
+    private final AuthService authService;
+
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
@@ -26,7 +29,6 @@ public class SecurityConfig {
             .antMatchers("/api/user/signin", "/api/user/signup", "/api/users", "/api/user/*", "/api/user/*/posts", "/api/user", "/api/post/*", "/api/post", "/api/posts", "api/store/*");
     }
 
-    // 수정 필요
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -39,12 +41,18 @@ public class SecurityConfig {
             .and()
             .authorizeRequests()
             .antMatchers("/api/user/**").access("hasRole('ROLE_USER')")
-            .anyRequest().permitAll();
+            .anyRequest().permitAll()
+            .and()
+            .exceptionHandling().accessDeniedHandler(new CAccessDeniedHandler())
+            .and()
+            .exceptionHandling().authenticationEntryPoint(new CAuthenticationEntryPoint())
+            .and()
+            .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class);
         http.headers().frameOptions().disable();
         return http.build();
     }
 
-    ;
+
 
     public class customDsl extends AbstractHttpConfigurer<customDsl, HttpSecurity> {
 
