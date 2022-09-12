@@ -14,8 +14,8 @@ import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
-import org.almondiz.almondiz.user.UserService;
-import org.almondiz.almondiz.user.entity.User;
+import org.almondiz.almondiz.response.user.UserService;
+import org.almondiz.almondiz.response.user.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service

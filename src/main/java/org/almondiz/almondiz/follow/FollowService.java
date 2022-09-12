@@ -6,8 +6,8 @@ import org.almondiz.almondiz.exception.exception.CFollowNotFoundException;
 import org.almondiz.almondiz.exception.exception.CFollowNotPermittedException;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
-import org.almondiz.almondiz.user.UserService;
-import org.almondiz.almondiz.user.entity.User;
+import org.almondiz.almondiz.response.user.UserService;
+import org.almondiz.almondiz.response.user.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
