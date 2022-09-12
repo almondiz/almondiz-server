@@ -16,13 +16,7 @@ import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.entity.Token;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,6 +39,18 @@ public class UserController {
     @ApiOperation(value = "회원가입")
     public CommonResult createUser(@RequestBody UserRegisterDto userRegisterDto){
         Token token = authService.signup(userRegisterDto);
+        return responseService.getSingleResult(token);
+    }
+
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 refresh_token", required = true, dataType = "String", paramType = "header")
+    })
+    @GetMapping(value="/user/token")
+    @ApiOperation(value = "AccessToken 재발급", notes = "RefreshToken을 헤더에 넣어 AccessToken을 재발급 받는다")
+    public CommonResult getAccessTokenByRefreshToken(@RequestHeader(value = "AUTH-TOKEN") String refreshToken) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Token token = authService.refreshTokenAccessToken(email, refreshToken);
         return responseService.getSingleResult(token);
     }
 
