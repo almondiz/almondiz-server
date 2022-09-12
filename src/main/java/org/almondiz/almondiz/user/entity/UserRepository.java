@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.response.user.entity;
+package org.almondiz.almondiz.user.entity;
 
 import java.util.List;
 import java.util.Optional;

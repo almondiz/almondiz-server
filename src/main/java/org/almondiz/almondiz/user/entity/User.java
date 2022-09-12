@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.response.user.entity;
+package org.almondiz.almondiz.user.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
-package org.almondiz.almondiz.response.user.dto;
+package org.almondiz.almondiz.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.almondiz.almondiz.response.user.entity.Role;
-import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.user.entity.Role;
+import org.almondiz.almondiz.user.entity.User;
 
 @Getter
 @Builder

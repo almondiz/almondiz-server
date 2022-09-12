@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.exception.exception.CNotificationNotFoundException;
 import org.almondiz.almondiz.exception.exception.CNotificationNotPermittedException;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
-import org.almondiz.almondiz.response.user.UserService;
-import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.user.UserService;
+import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

@@ -19,7 +19,7 @@ import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.store.entity.Store;
-import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.user.entity.User;
 
 @Builder
 @NoArgsConstructor

@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.category.entity.Category;
 import org.almondiz.almondiz.common.TimeStamped;
-import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.user.entity.User;
 
 @Builder
 @NoArgsConstructor

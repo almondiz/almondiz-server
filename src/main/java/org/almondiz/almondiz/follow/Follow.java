@@ -2,7 +2,7 @@ package org.almondiz.almondiz.follow;
 
 import lombok.*;
 import org.almondiz.almondiz.common.TimeStamped;
-import org.almondiz.almondiz.response.user.entity.User;
+import org.almondiz.almondiz.user.entity.User;
 
 import javax.persistence.*;
 
