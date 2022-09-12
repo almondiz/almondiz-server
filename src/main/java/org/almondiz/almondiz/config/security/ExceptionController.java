@@ -1,14 +1,14 @@
 package org.almondiz.almondiz.config.security;
 
-import io.swagger.annotations.Api;
 import org.almondiz.almondiz.exception.exception.CAccessDeniedException;
 import org.almondiz.almondiz.exception.exception.CAuthenticationEntryPointException;
 import org.almondiz.almondiz.response.CommonResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
-@Api(tags = {"Spring Security 관련 컨트롤러"})
+@ApiIgnore
 @RestController
 @RequestMapping(value = "/exception")
 public class ExceptionController {

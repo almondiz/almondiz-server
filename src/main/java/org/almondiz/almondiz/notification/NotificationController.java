@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.notification;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@Api(tags = {"5. NOTIFICATION API"})
 @RequestMapping(value = "/api")
 public class NotificationController {
 
