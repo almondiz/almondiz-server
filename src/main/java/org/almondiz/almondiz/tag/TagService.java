@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.tag;
 
+import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,7 @@ public class TagService {
 
     @Transactional
     public Tag getTagById(Long tagId){
-        Tag tag = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
-        return tag;
+        return tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
     }
 
 }
