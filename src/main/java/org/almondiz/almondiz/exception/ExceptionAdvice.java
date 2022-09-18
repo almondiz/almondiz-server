@@ -92,4 +92,10 @@ public class ExceptionAdvice {
     protected CommonResult NotValidEmailException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("옳지 않은 이메일입니다. 이메일 형식을 확인해주세요");
     }
+
+    @ExceptionHandler(StoreExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult StoreExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 위치의 상호명은 이미 존재합니다.");
+    }
 }
