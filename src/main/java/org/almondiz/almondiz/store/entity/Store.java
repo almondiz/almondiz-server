@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.category.entity.Category;
 import org.almondiz.almondiz.common.TimeStamped;
-import org.almondiz.almondiz.user.entity.User;
 
 @Builder
 @NoArgsConstructor
@@ -31,17 +30,20 @@ public class Store extends TimeStamped {
     @Column(nullable = false)
     private String storeName;
 
-    @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "ownerId")
-    private User owner;
+    // @ManyToOne(targetEntity = User.class)
+    // @JoinColumn(name = "ownerId")
+    // private User owner;
 
     @ManyToOne(targetEntity = Category.class)
     @JoinColumn(name = "categoryId")
     private Category category;
 
     private double lati;
+
     private double longi;
+
     private String address;
+
     private String contact;
 
 }
