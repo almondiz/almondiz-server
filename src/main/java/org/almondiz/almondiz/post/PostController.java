@@ -3,6 +3,7 @@ package org.almondiz.almondiz.post;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.response.CommonResult;
@@ -36,7 +37,7 @@ public class PostController {
 
     @GetMapping(value="/posts")
     @ApiOperation(value = "모든 post 조회")
-    public ListResult<PostResponseDto> findAllPosts(){
+    public ListResult<PostInFeedResponseDto> findAllPosts(){
         return responseService.getListResult(postService.getAllPosts());
     }
 

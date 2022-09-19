@@ -13,6 +13,7 @@ import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
+import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
@@ -65,10 +66,10 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostResponseDto> getAllPosts() {
+    public List<PostInFeedResponseDto> getAllPosts() {
         return postRepository.findAll()
                              .stream()
-                             .map(post -> this.getPostByPostId(post.getPostId()))
+                             .map(post -> this.getPostInFeedResponseDtoByPostId(post.getPostId()))
                              .collect(Collectors.toList());
     }
 
@@ -78,13 +79,25 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto getPostByPostId(Long postId) {
+    public PostInFeedResponseDto getPostInFeedResponseDtoByPostId(Long postId){
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
         UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
         StoreResponseDto store = storeService.getStoreDto(post.getStore());
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
-        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
+        CommentResponseDto bestComment = this.getBestCommentByPostId(postId);
+
+        return new PostInFeedResponseDto(post, postFileImgUrls, user, store, tagList, bestComment);
+    }
+
+    @Transactional
+        public PostResponseDto getPostByPostId(Long postId) {
+            Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+            UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+            StoreResponseDto store = storeService.getStoreDto(post.getStore());
+            List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
+            List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
+            List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
 
         return new PostResponseDto(post, postFileImgUrls, user, store, tagList, commentList);
     }
@@ -130,6 +143,7 @@ public class PostService {
     @Transactional
     public List<CommentResponseDto> findCommentsByPostId(Long postId) {
         Post post = this.findPostByPostId(postId);
+
         return commentRepository.findByPost(post)
                                 .stream().map(comment -> this.getCommentResponseDto(comment.getCommentId()))
                                 .collect(Collectors.toList());
@@ -140,8 +154,18 @@ public class PostService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             CommentNotFoundException::new);
         UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+
         return new CommentResponseDto(comment, user);
     }
+
+    @Transactional
+    public CommentResponseDto getBestCommentByPostId(Long postId){
+        Post post = this.findPostByPostId(postId);
+        Comment comment = commentRepository.findFirstByOrderByCreatedAtDesc();
+
+        return this.getCommentResponseDto(comment.getCommentId());
+    }
+
 
 
 
