@@ -15,11 +15,13 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedHeader("*");
         config.addExposedHeader("*");
         config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/api/**", config);
+        config.addExposedHeader("AUTH-TOKEN");
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 }
