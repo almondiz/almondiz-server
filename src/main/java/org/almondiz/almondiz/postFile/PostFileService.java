@@ -13,7 +13,6 @@ import org.almondiz.almondiz.postFile.entity.PostFileRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-@Setter
 @RequiredArgsConstructor
 public class PostFileService {
 

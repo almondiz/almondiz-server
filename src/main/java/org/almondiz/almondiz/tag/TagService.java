@@ -10,7 +10,6 @@ import org.almondiz.almondiz.tag.entity.TagRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-@Setter
 @RequiredArgsConstructor
 public class TagService {
 

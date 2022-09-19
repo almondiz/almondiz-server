@@ -28,7 +28,6 @@ import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service
-@Setter
 @RequiredArgsConstructor
 public class PostService {
 

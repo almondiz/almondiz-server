@@ -22,7 +22,6 @@ import org.almondiz.almondiz.user.entity.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-@Setter
 @RequiredArgsConstructor
 public class UserService {
 
