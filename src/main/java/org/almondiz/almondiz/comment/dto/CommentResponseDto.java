@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.entity.Comment;
+import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 
 @Getter
 @Builder
@@ -14,21 +15,15 @@ import org.almondiz.almondiz.comment.entity.Comment;
 public class CommentResponseDto {
 
     private Long commentId;
-
-    private Long userId;
-
-    private String nickName;
-
     private String text;
-
     private LocalDateTime createdAt;
+    private UserAsWriterResponseDto user;
 
-    public CommentResponseDto(Comment comment, String nickName) {
+    public CommentResponseDto(Comment comment, UserAsWriterResponseDto user) {
         this.commentId = comment.getCommentId();
-        this.userId = comment.getUser().getUserId();
-        this.nickName = nickName;
         this.text = comment.getText();
         this.createdAt = comment.getCreatedAt();
+        this.user = user;
     }
 
 }

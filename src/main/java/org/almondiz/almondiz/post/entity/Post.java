@@ -41,9 +41,6 @@ public class Post extends TimeStamped {
     @JoinColumn(name = "storeId")
     private Store store;
 
-    @Column(nullable = false)
-    private String title;
-
     private String content;
 
     @Setter
@@ -52,7 +49,6 @@ public class Post extends TimeStamped {
     private Status status;
 
     public void update(PostRequestDto postRequestDto){
-        this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
     }
 
