@@ -1,6 +1,7 @@
 package org.almondiz.almondiz.storescrap;
 
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.exception.exception.StoreScrapExistedException;
 import org.almondiz.almondiz.exception.exception.StoreScrapNotFoundException;
@@ -55,7 +56,10 @@ public class StoreScrapService {
 
         Optional<StoreScrap> storeScrap = storeScrapRepository.findByUserAndStore(user, store);
 
-        return storeScrap.isPresent();
+        if (storeScrap.isPresent() && !storeScrap.get().getStatus().equals(Status.DELETED)) {
+            return true;
+        }
+        return false;
     }
 
     @Transactional
@@ -84,15 +88,23 @@ public class StoreScrapService {
 
         Store store = storeService.getStoreById(storeId);
 
-        if(storeScrapRepository.findByUserAndStore(user, store).isPresent()){
-            throw new StoreScrapExistedException();
+        Optional<StoreScrap> storeScrap = storeScrapRepository.findByUserAndStore(user, store);
+
+        if (storeScrap.isPresent()) {
+            if (storeScrap.get().getStatus().equals(Status.DELETED)) {
+                storeScrap.get().setStatus(Status.ALIVE);
+            } else {
+                throw new StoreScrapExistedException();
+            }
+        } else {
+            storeScrap = Optional.of(storeScrapRepository.save(StoreScrap.builder()
+                                                                         .user(user)
+                                                                         .store(store)
+                                                                         .status(Status.ALIVE)
+                                                                         .build()));
         }
 
-        StoreScrap storeScrap = storeScrapRepository.save(StoreScrap.builder()
-                                                                    .user(user)
-                                                                    .store(store)
-                                                                    .build());
-        return getStoreScrapDto(storeScrap);
+        return getStoreScrapDto(storeScrapRepository.save(storeScrap.get()));
     }
 
     @Transactional
@@ -101,11 +113,12 @@ public class StoreScrapService {
 
         User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
 
-        if(!storeScrap.getUser().equals(user)) {
+        if (!storeScrap.getUser().equals(user)) {
             throw new StoreScrapNotPermittedException();
         }
 
-        storeScrapRepository.delete(storeScrap);
+        storeScrap.setStatus(Status.DELETED);
+        storeScrapRepository.save(storeScrap);
     }
 
     @Transactional
@@ -116,6 +129,7 @@ public class StoreScrapService {
 
         StoreScrap storeScrap = storeScrapRepository.findByUserAndStore(user, store).orElseThrow(StoreScrapNotFoundException::new);
 
-        storeScrapRepository.delete(storeScrap);
+        storeScrap.setStatus(Status.DELETED);
+        storeScrapRepository.save(storeScrap);
     }
 }

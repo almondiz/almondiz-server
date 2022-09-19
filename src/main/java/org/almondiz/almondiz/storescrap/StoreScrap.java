@@ -1,9 +1,7 @@
 package org.almondiz.almondiz.storescrap;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.store.entity.Store;
 import org.almondiz.almondiz.user.entity.User;
@@ -29,4 +27,9 @@ public class StoreScrap extends TimeStamped {
     @ManyToOne
     @JoinColumn(name = "storeId")
     private Store store;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 }
