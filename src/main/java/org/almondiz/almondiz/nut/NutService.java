@@ -9,7 +9,6 @@ import org.almondiz.almondiz.nut.entity.NutRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-@Setter
 @RequiredArgsConstructor
 public class NutService {
 
