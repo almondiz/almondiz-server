@@ -15,6 +15,7 @@ import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.profileFile.entity.ProfileFile;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.entity.Tag;
+import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 import org.almondiz.almondiz.user.dto.UserRequestDto;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.entity.User;
@@ -51,6 +52,16 @@ public class UserService {
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
         return new UserResponseDto(user, profileImgUrl, nickName);
+    }
+
+    @Transactional
+    public UserAsWriterResponseDto getUserAsWriterResponseDto(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+        String profileImgUrl = user.getProfileFile().getFileUrl();
+        String nutName = user.getNut().getNutName();
+        String tagName = user.getTag().getTagName();
+        String nickName = tagName + " " + nutName;
+        return new UserAsWriterResponseDto(user, profileImgUrl, nickName);
     }
 
     @Transactional

@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.store.entity.StoreResponseDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
+import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 
 @Getter
 @Builder
@@ -16,32 +18,21 @@ import org.almondiz.almondiz.tag.dto.TagResponseDto;
 @NoArgsConstructor
 public class PostResponseDto {
     private Long postId;
-    private String title;
-    private String content;
-    private String nickName;
-    private String storeName;
-    private String storeAddress;
-    private double lati;
-    private double longi;
+    private String text;
     private List<String> postFileImgUrls;
-    private String userProfileImgUrl;
-    private List<CommentResponseDto> commentList;
-    private List<TagResponseDto> tagList;
+    private UserAsWriterResponseDto user;
+    private StoreResponseDto store;
+    private List<TagResponseDto> tags;
+    private List<CommentResponseDto> comments;
 
-
-    public PostResponseDto(Post post, String nickName, Store store, List<String> postFileImgUrls, String userProfileImgUrl, List<CommentResponseDto> commentList, List<TagResponseDto> tagList){
+    public PostResponseDto(Post post,  List<String> postFileImgUrls, UserAsWriterResponseDto user, StoreResponseDto store, List<TagResponseDto> tagList, List<CommentResponseDto> commentList){
         this.postId = post.getPostId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.nickName = nickName;
-        this.storeName = store.getStoreName();
-        this.storeAddress = store.getAddress();
-        this.lati = store.getLati();
-        this.longi = store.getLongi();
+        this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;
-        this.userProfileImgUrl = userProfileImgUrl;
-        this.commentList = commentList;
-        this.tagList = tagList;
+        this.user = user;
+        this.store = store;
+        this.tags = tagList;
+        this.comments = commentList;
     }
 
 }

@@ -15,6 +15,7 @@ import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.user.UserService;
+import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -59,10 +60,11 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto getCommentResponseDto(Long commentId){
-        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-        String nickName = userService.getNickName(comment.getUser());
-        return new CommentResponseDto(comment, nickName);
+    public CommentResponseDto getCommentResponseDto(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+            CommentNotFoundException::new);
+        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+        return new CommentResponseDto(comment, user);
     }
 
     @Transactional

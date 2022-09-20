@@ -20,10 +20,12 @@ import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.store.StoreService;
 import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.store.entity.StoreResponseDto;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.tagpost.TagPostService;
 import org.almondiz.almondiz.user.UserService;
+import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +56,6 @@ public class PostService {
         Post post = Post.builder()
                         .user(user)
                         .store(store)
-                        .title(postRequestDto.getTitle())
                         .content(postRequestDto.getContent())
                         .status(Status.ALIVE)
                         .build();
@@ -78,15 +79,13 @@ public class PostService {
     @Transactional
     public PostResponseDto getPostByPostId(Long postId) {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
-        User user = post.getUser();
-        String nickName = userService.getNickName(user);
-        Store store = post.getStore();
+        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+        StoreResponseDto store = storeService.getStoreDto(post.getStore());
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
-        String userProfileImgUrl = user.getProfileFile().getFileUrl();
-        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
+        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
 
-        return new PostResponseDto(post, nickName, store, postFileImgUrls, userProfileImgUrl, commentList, tagList);
+        return new PostResponseDto(post, postFileImgUrls, user, store, tagList, commentList);
     }
 
     @Transactional
@@ -139,8 +138,8 @@ public class PostService {
     public CommentResponseDto getCommentResponseDto(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             CommentNotFoundException::new);
-        String nickName = userService.getNickName(comment.getUser());
-        return new CommentResponseDto(comment, nickName);
+        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+        return new CommentResponseDto(comment, user);
     }
 
 
