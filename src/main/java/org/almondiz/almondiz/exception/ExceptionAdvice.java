@@ -98,4 +98,22 @@ public class ExceptionAdvice {
     protected CommonResult StoreExistedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 위치의 상호명은 이미 존재합니다.");
     }
+
+    @ExceptionHandler(StoreScrapExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult StoreScrapExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("사용자는 해당 업체를 이미 스크랩하였습니다.");
+    }
+
+    @ExceptionHandler(StoreScrapNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult StoreScrapNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 업체스크랩은 존재하지 않습니다");
+    }
+
+    @ExceptionHandler(StoreScrapNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult StoreScrapNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 권한으로 업체 스크랩에 접근할 수 없습니다.");
+    }
 }
