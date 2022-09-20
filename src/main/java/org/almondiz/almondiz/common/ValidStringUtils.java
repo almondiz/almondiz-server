@@ -1,6 +1,6 @@
 package org.almondiz.almondiz.common;
 
-import org.almondiz.almondiz.exception.exception.CNotValidEmailException;
+import org.almondiz.almondiz.exception.exception.NotValidEmailException;
 
 import java.util.regex.Pattern;
 
@@ -11,7 +11,7 @@ public class ValidStringUtils {
 
     public static String getValidEmail(String email) {
         if (!EMAIL.matcher(email).matches()) {
-            throw new CNotValidEmailException();
+            throw new NotValidEmailException();
         }
         return email;
     }

@@ -65,18 +65,18 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userEmail) {
-        return userService.findByEmail(userEmail).orElseThrow(CUserNotFoundException::new);
+        return userService.findByEmail(userEmail).orElseThrow(UserNotFoundException::new);
     }
 
     public Token signIn(String userEmail) {
-        userService.findByEmail(userEmail).orElseThrow(CUserNotFoundException::new);
+        userService.findByEmail(userEmail).orElseThrow(UserNotFoundException::new);
         return createToken(userEmail);
     }
 
     @Transactional
     public Token signup(UserRegisterDto userRegisterDto) {
         if (nonNull(ValidStringUtils.getValidEmail(userRegisterDto.getEmail())) && userService.findByEmail(userRegisterDto.getEmail()).isPresent()) {
-            throw new CAccountExistedException();
+            throw new AccountExistedException();
         }
 
         ProfileFile profileFile = profileFileService.getProfileFileById(userRegisterDto.getProfileId());
@@ -129,7 +129,7 @@ public class AuthService implements UserDetailsService {
             Date now = new Date();
             DecodedJWT decodedJWT = getDecodedToken(refreshToken).get();
             if (!checkRefreshTokenSubject(decodedJWT)) {
-                throw new CRefreshTokenException();
+                throw new RefreshTokenException();
             }
             if (decodedJWT.getExpiresAt().after(now)) {
                 String newAccessToken = createAccessToken(userEmail, now);
@@ -143,10 +143,10 @@ public class AuthService implements UserDetailsService {
                             .refreshToken(newRefreshToken)
                             .build();
             } else {
-                throw new CExpiredTokenException();
+                throw new ExpiredTokenException();
             }
         } else {
-            throw new CRefreshTokenException();
+            throw new RefreshTokenException();
         }
     }
 
@@ -159,7 +159,7 @@ public class AuthService implements UserDetailsService {
         return getDecodedToken(token)
             .map(this::getUserEmailFromToken)
             .flatMap(userService::findByEmail)
-            .orElseThrow(CTokenUserNotFoundException::new);
+            .orElseThrow(TokenUserNotFoundException::new);
     }
 
     private Optional<DecodedJWT> getDecodedToken(String token) {
@@ -183,7 +183,7 @@ public class AuthService implements UserDetailsService {
         }
 
         if (decodedJWT.get().getExpiresAt().before(now)) {
-            throw new CExpiredTokenException();
+            throw new ExpiredTokenException();
         }
 
         return nonNull(loadUserByToken(token));
