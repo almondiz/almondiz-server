@@ -38,7 +38,6 @@ public class User extends TimeStamped implements UserDetails {
     private static final String Role_PREFIX = "ROLE_";
 
     @Id
-    // 상의할 필요
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
