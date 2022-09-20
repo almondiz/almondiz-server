@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostRequestDto {
     private Long storeId;
-    private String title;
+
     private String content;
 }
