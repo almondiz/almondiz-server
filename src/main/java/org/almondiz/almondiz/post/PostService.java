@@ -160,7 +160,7 @@ public class PostService {
     @Transactional
     public CommentResponseDto getBestCommentByPostId(Long postId){
         Post post = this.findPostByPostId(postId);
-        List<Comment> commentList = commentRepository.findByPost(post);
+        List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
 
         if (commentList.size() == 0){
             return null;
