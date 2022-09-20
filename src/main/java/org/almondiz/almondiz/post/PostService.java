@@ -112,8 +112,8 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostResponseDto> getPostsByUserEmail(String email) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+    public List<PostResponseDto> getPostsByUserId(Long userId) {
+        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
 
         return postRepository.findByUser(user)
                              .stream()

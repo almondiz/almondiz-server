@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.post.dto.PostByUserDto;
 import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -57,16 +58,10 @@ public class PostController {
         return responseService.getSingleResult(postService.getPostDtoById(postId));
     }
 
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
-    })
     @GetMapping(value="/user/posts")
     @ApiOperation(value = "사용자별 post 조회")
-    public ListResult<PostResponseDto> findPostsByUserId(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        return responseService.getListResult(postService.getPostsByUserEmail(email));
+    public ListResult<PostResponseDto> findPostsByUserId(@RequestBody PostByUserDto postByUserDto){
+        return responseService.getListResult(postService.getPostsByUserId(postByUserDto.getUserId()));
     }
 
     @GetMapping(value="/store/{storeId}/posts")
