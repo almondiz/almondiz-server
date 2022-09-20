@@ -12,6 +12,7 @@ import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
+import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.user.UserService;
@@ -35,19 +36,19 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto create(Long userId, Long postId, CommentRequestDto commentRequestDto){
+    public CommentResponseDto create(String email, Long postId, CommentRequestDto commentRequestDto){
 
         Post post = postService.findPostByPostId(postId);
-        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
 
-        Comment comment = Comment.builder()
-                                 .text(commentRequestDto.getText())
-                                 .status(Status.ALIVE)
-                                 .post(post)
-                                 .user(user)
-                                 .build();
+        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
 
-        commentRepository.save(comment);
+        Comment comment = commentRepository.save(Comment.builder()
+                                                        .text(commentRequestDto.getText())
+                                                        .status(Status.ALIVE)
+                                                        .post(post)
+                                                        .user(user)
+                                                        .build());
+
         return this.getCommentResponseDto(comment.getCommentId());
     }
 
@@ -68,19 +69,31 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto update(Long commentId, CommentRequestDto commentRequestDto){
+    public CommentResponseDto update(String email, Long commentId, CommentRequestDto commentRequestDto){
+        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        if(!comment.getUser().equals(user)){
+            throw new CommentNotPermittedException();
+        }
+
         comment.update(commentRequestDto);
         commentRepository.save(comment);
         return this.getCommentResponseDto(commentId);
     }
 
     @Transactional
-    public void delete(Long commentId){
+    public void delete(String email, Long commentId){
+        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        if(!comment.getUser().equals(user)){
+            throw new CommentNotPermittedException();
+        }
+
         comment.setStatus(Status.DELETED);
         commentRepository.save(comment);
     }
-
-
 }
