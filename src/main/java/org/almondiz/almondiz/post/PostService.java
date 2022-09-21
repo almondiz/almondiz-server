@@ -50,7 +50,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto createPost(String email, PostRequestDto postRequestDto) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
         Store store = storeService.getStoreById(postRequestDto.getStoreId());
 
         Post post = Post.builder()
@@ -132,7 +132,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto modifyPost(String email, Long postId, PostRequestDto postRequestDto) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
@@ -148,7 +148,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto deletePost(String email, Long postId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 

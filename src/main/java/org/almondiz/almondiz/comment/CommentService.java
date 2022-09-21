@@ -40,7 +40,7 @@ public class CommentService {
 
         Post post = postService.findPostByPostId(postId);
 
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.save(Comment.builder()
                                                         .text(commentRequestDto.getText())
@@ -70,7 +70,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto update(String email, Long commentId, CommentRequestDto commentRequestDto){
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
@@ -85,7 +85,7 @@ public class CommentService {
 
     @Transactional
     public void delete(String email, Long commentId){
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
