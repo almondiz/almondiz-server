@@ -45,7 +45,9 @@ public class ExceptionAdvice {
     protected CommonResult FollowNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 팔로우에 접근할 수 없습니다.");
     }
+
     @ExceptionHandler(NotificationNotFoundException.class)
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult NotificationNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 알림이 존재하지 않습니다.");
@@ -115,5 +117,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult StoreScrapNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 권한으로 업체 스크랩에 접근할 수 없습니다.");
+    }
+
+    @ExceptionHandler(PostNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 게시글에 접근할 수 없습니다.");
+    }
+
+    @ExceptionHandler(CommentNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult CommentNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 댓글에 접근할 수 없습니다.");
     }
 }

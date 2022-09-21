@@ -1,6 +1,9 @@
 package org.almondiz.almondiz.post.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +28,14 @@ public class PostInFeedResponseDto {
     private List<TagResponseDto> tags;
     private CommentResponseDto bestComment;
 
-    public PostInFeedResponseDto(Post post,  List<String> postFileImgUrls, UserAsWriterResponseDto user, StoreResponseDto store, List<TagResponseDto> tagList, CommentResponseDto bestComment){
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
+
+    public PostInFeedResponseDto(Post post,  List<String> postFileImgUrls, UserAsWriterResponseDto user, StoreResponseDto store, List<TagResponseDto> tagList,
+                                 CommentResponseDto bestComment, LocalDateTime createdAt, LocalDateTime modifiedAt){
         this.postId = post.getPostId();
         this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;
@@ -33,7 +43,7 @@ public class PostInFeedResponseDto {
         this.store = store;
         this.tags = tagList;
         this.bestComment = bestComment;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
-
-
 }

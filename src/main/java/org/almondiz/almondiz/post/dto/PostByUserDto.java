@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostRequestDto {
-    private Long storeId;
-
-    private String content;
+public class PostByUserDto {
+    private Long userId;
 }

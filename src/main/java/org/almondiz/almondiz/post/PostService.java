@@ -12,6 +12,7 @@ import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
+import org.almondiz.almondiz.exception.exception.PostNotPermittedException;
 import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -48,11 +49,10 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto) {
-        // user id 임시값 - userId 가져오는 과정 추가 필요
-        Long userId = Long.valueOf(1);
-        User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
+    public PostResponseDto createPost(String email, PostRequestDto postRequestDto) {
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
         Store store = storeService.getStoreById(postRequestDto.getStoreId());
+
         Post post = Post.builder()
                         .user(user)
                         .store(store)
@@ -60,7 +60,7 @@ public class PostService {
                         .status(Status.ALIVE)
                         .build();
 
-        return getPostByPostId(postRepository.save(post).getPostId());
+        return getPostDtoById(postRepository.save(post).getPostId());
     }
 
     @Transactional
@@ -77,27 +77,37 @@ public class PostService {
     }
 
     @Transactional
-    public PostInFeedResponseDto getPostInFeedResponseDtoByPostId(Long postId){
+    public PostInFeedResponseDto getPostInFeedResponseDtoByPostId(Long postId) {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+
         UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+
         StoreResponseDto store = storeService.getStoreDto(post.getStore());
+
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
+
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
+
         CommentResponseDto bestComment = this.getBestCommentByPostId(postId);
 
-        return new PostInFeedResponseDto(post, postFileImgUrls, user, store, tagList, bestComment);
+        return new PostInFeedResponseDto(post, postFileImgUrls, user, store, tagList, bestComment, post.getCreatedAt(), post.getModifiedAt());
     }
 
     @Transactional
-        public PostResponseDto getPostByPostId(Long postId) {
-            Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
-            UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
-            StoreResponseDto store = storeService.getStoreDto(post.getStore());
-            List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
-            List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
-            List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
+    public PostResponseDto getPostDtoById(Long postId) {
+        Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
-        return new PostResponseDto(post, postFileImgUrls, user, store, tagList, commentList);
+        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+
+        StoreResponseDto store = storeService.getStoreDto(post.getStore());
+
+        List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
+
+        List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
+
+        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
+
+        return new PostResponseDto(post, postFileImgUrls, user, store, tagList, commentList, post.getCreatedAt(), post.getModifiedAt());
     }
 
     @Transactional
@@ -106,7 +116,7 @@ public class PostService {
 
         return postRepository.findByUser(user)
                              .stream()
-                             .map(post -> this.getPostByPostId(post.getPostId()))
+                             .map(post -> this.getPostDtoById(post.getPostId()))
                              .collect(Collectors.toList());
     }
 
@@ -116,26 +126,40 @@ public class PostService {
 
         return postRepository.findByStore(store)
                              .stream()
-                             .map(post -> this.getPostByPostId(post.getPostId()))
+                             .map(post -> this.getPostDtoById(post.getPostId()))
                              .collect(Collectors.toList());
     }
 
     @Transactional
-    public PostResponseDto modifyPost(Long postId, PostRequestDto postRequestDto) {
+    public PostResponseDto modifyPost(String email, Long postId, PostRequestDto postRequestDto) {
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+
+        if(!post.getUser().equals(user)){
+            throw new PostNotPermittedException();
+        }
+
         post.update(postRequestDto);
         postRepository.save(post);
 
-        return this.getPostByPostId(post.getPostId());
+        return this.getPostDtoById(post.getPostId());
     }
 
     @Transactional
-    public PostResponseDto deletePost(Long postId) {
+    public PostResponseDto deletePost(String email, Long postId) {
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+
+        if(!post.getUser().equals(user)){
+            throw new PostNotPermittedException();
+        }
+
         post.setStatus(Status.DELETED);
         postRepository.save(post);
 
-        return this.getPostByPostId(post.getPostId());
+        return this.getPostDtoById(post.getPostId());
     }
 
     @Transactional
@@ -157,17 +181,14 @@ public class PostService {
     }
 
     @Transactional
-    public CommentResponseDto getBestCommentByPostId(Long postId){
+    public CommentResponseDto getBestCommentByPostId(Long postId) {
         Post post = this.findPostByPostId(postId);
         List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
 
-        if (commentList.size() == 0){
+        if (commentList.size() == 0) {
             return null;
         }
 
         return this.getCommentResponseDto(commentList.get(0).getCommentId());
     }
-
-
-
 }

@@ -1,6 +1,8 @@
 package org.almondiz.almondiz.comment.dto;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,8 +17,13 @@ import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 public class CommentResponseDto {
 
     private Long commentId;
+
     private String text;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private UserAsWriterResponseDto user;
 
     public CommentResponseDto(Comment comment, UserAsWriterResponseDto user) {
@@ -25,5 +32,4 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt();
         this.user = user;
     }
-
 }
