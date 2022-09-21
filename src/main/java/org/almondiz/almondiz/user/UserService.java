@@ -6,9 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.nut.NutService;
 import org.almondiz.almondiz.nut.entity.Nut;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
@@ -46,7 +45,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto getUser(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
@@ -56,7 +55,7 @@ public class UserService {
 
     @Transactional
     public UserAsWriterResponseDto getUserAsWriterResponseDto(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
@@ -66,7 +65,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto getUserByEmail(String email){
-        User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = findByEmail(email).orElseThrow(UserNotFoundException::new);
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
@@ -75,7 +74,7 @@ public class UserService {
 	
 	@Transactional
     public UserResponseDto modifyUser(String email, UserRequestDto userRequestDto){
-        User user = userRepository.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         ProfileFile profileFile = profileFileService.getProfileFileById(userRequestDto.getProfileId());
         Tag tag = tagService.getTagById(userRequestDto.getTagId());
         Nut nut = nutService.getNutById(userRequestDto.getNutId());
@@ -86,7 +85,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto deleteUserByEmail(String email){
-        User user = findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = findByEmail(email).orElseThrow(UserNotFoundException::new);
         user.setStatus(Status.DELETED);
         userRepository.save(user);
         return getUser(user.getUserId());
@@ -111,7 +110,7 @@ public class UserService {
 
     @Transactional
     public String getNickName(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return this.getNickName(user);
     }
 }

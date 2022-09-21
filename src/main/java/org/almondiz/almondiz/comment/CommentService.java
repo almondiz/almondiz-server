@@ -10,7 +10,7 @@ import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
 import org.almondiz.almondiz.post.PostService;

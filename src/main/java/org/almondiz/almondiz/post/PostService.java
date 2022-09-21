@@ -9,7 +9,7 @@ import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotPermittedException;
@@ -51,7 +51,6 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(String email, PostRequestDto postRequestDto) {
         User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
-
         Store store = storeService.getStoreById(postRequestDto.getStoreId());
 
         Post post = Post.builder()
@@ -113,7 +112,7 @@ public class PostService {
 
     @Transactional
     public List<PostResponseDto> getPostsByUserId(Long userId) {
-        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return postRepository.findByUser(user)
                              .stream()

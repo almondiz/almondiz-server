@@ -1,9 +1,9 @@
 package org.almondiz.almondiz.notification;
 
 import lombok.RequiredArgsConstructor;
-import org.almondiz.almondiz.exception.exception.CNotificationNotFoundException;
-import org.almondiz.almondiz.exception.exception.CNotificationNotPermittedException;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.NotificationNotFoundException;
+import org.almondiz.almondiz.exception.exception.NotificationNotPermittedException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class NotificationService {
         Optional<User> user = userService.findByEmail(email);
 
         if(user.isEmpty()){
-            throw new CUserNotFoundException();
+            throw new UserNotFoundException();
         }
 
         return notificationRepository.findAllByUser(user.get())
@@ -59,17 +59,17 @@ public class NotificationService {
         Optional<User> user = userService.findByEmail(email);
 
         if(user.isEmpty()){
-            throw new CUserNotFoundException();
+            throw new UserNotFoundException();
         }
 
         Optional<Notification> notification = this.findById(notificationId);
 
         if(notification.isEmpty()){
-            throw new CNotificationNotFoundException();
+            throw new NotificationNotFoundException();
         }
 
         if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
-            throw new CNotificationNotPermittedException();
+            throw new NotificationNotPermittedException();
         }
 
         Notification readNotification = notification.get();
@@ -82,17 +82,17 @@ public class NotificationService {
         Optional<User> user = userService.findByEmail(email);
 
         if(user.isEmpty()){
-            throw new CUserNotFoundException();
+            throw new UserNotFoundException();
         }
 
         Optional<Notification> notification = this.findById(notificationId);
 
         if(notification.isEmpty()){
-            throw new CNotificationNotFoundException();
+            throw new NotificationNotFoundException();
         }
 
         if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
-            throw new CNotificationNotPermittedException();
+            throw new NotificationNotPermittedException();
         }
 
         notificationRepository.deleteById(notificationId);

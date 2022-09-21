@@ -22,73 +22,74 @@ public class ExceptionAdvice {
         return responseService.getFailResult();
     }
 
-    @ExceptionHandler(CUserNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult UserNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 계정이 존재하지 않거나 잘못된 계정입니다.");
     }
 
-    @ExceptionHandler(CFollowExistedException.class)
+    @ExceptionHandler(FollowExistedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult FollowExistedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("이미 존재하는 팔로우입니다.");
     }
 
-    @ExceptionHandler(CFollowNotFoundException.class)
+    @ExceptionHandler(FollowNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult FollowNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 팔로우가 존재하지 않습니다.");
     }
 
-    @ExceptionHandler(CFollowNotPermittedException.class)
+    @ExceptionHandler(FollowNotPermittedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult FollowNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 팔로우에 접근할 수 없습니다.");
     }
 
-    @ExceptionHandler(CNotificationNotFoundException.class)
+    @ExceptionHandler(NotificationNotFoundException.class)
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult NotificationNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 알림이 존재하지 않습니다.");
     }
 
-    @ExceptionHandler(CNotificationNotPermittedException.class)
+    @ExceptionHandler(NotificationNotPermittedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult NotificationNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 권한으로 알림에 접근할 수 없습니다.");
     }
 
-    @ExceptionHandler(CRefreshTokenException.class)
+    @ExceptionHandler(RefreshTokenException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult RefreshTokenException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("잘못된 Refresh 토큰입니다. 다시 입력해주세요.");
     }
 
-    @ExceptionHandler(CExpiredTokenException.class)
+    @ExceptionHandler(ExpiredTokenException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult ExpiredTokenException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("만료된 토큰입니다. 다시 입력해주세요.");
     }
 
-    @ExceptionHandler(CTokenUserNotFoundException.class)
+    @ExceptionHandler(TokenUserNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult TokenUserNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("토큰에 해당하는 계정이 존재하지 않거나 잘못된 계정입니다.");
     }
 
-    @ExceptionHandler(CAuthenticationEntryPointException.class)
+    @ExceptionHandler(AuthenticationEntryPointException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult authenticationEntryPointException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 리소스에 접근하기 위한 권한이 없습니다.");
     }
 
-    @ExceptionHandler(CAccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult accessDeniedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("보유한 권한으로 접근할 수 없는 리소스입니다.");
     }
 
-    @ExceptionHandler(CNotValidEmailException.class)
+    @ExceptionHandler(NotValidEmailException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult NotValidEmailException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("옳지 않은 이메일입니다. 이메일 형식을 확인해주세요");
