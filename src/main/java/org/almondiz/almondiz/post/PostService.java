@@ -5,12 +5,11 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
@@ -52,7 +51,7 @@ public class PostService {
     public PostResponseDto createPost(PostRequestDto postRequestDto) {
         // user id 임시값 - userId 가져오는 과정 추가 필요
         Long userId = Long.valueOf(1);
-        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
         Store store = storeService.getStoreById(postRequestDto.getStoreId());
         Post post = Post.builder()
                         .user(user)
@@ -103,7 +102,7 @@ public class PostService {
 
     @Transactional
     public List<PostResponseDto> getPostsByUserId(Long userId) {
-        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return postRepository.findByUser(user)
                              .stream()

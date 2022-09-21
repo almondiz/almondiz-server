@@ -2,7 +2,7 @@ package org.almondiz.almondiz.storescrap;
 
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.StoreScrapExistedException;
 import org.almondiz.almondiz.exception.exception.StoreScrapNotFoundException;
 import org.almondiz.almondiz.exception.exception.StoreScrapNotPermittedException;
@@ -39,7 +39,7 @@ public class StoreScrapService {
 
     @Transactional
     public StoreScrapResponseDto getStoreScrapByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -50,7 +50,7 @@ public class StoreScrapService {
 
     @Transactional
     public boolean isScrapByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -64,7 +64,7 @@ public class StoreScrapService {
 
     @Transactional
     public List<StoreScrapResponseDto> getAllStoreScrapByUser(String email) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         return storeScrapRepository.findAllByUser(user)
                                    .stream()
@@ -84,7 +84,7 @@ public class StoreScrapService {
 
     @Transactional
     public StoreScrapResponseDto create(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -111,7 +111,7 @@ public class StoreScrapService {
     public void deleteById(String email, Long scrapId) {
         StoreScrap storeScrap = storeScrapRepository.findById(scrapId).orElseThrow(StoreScrapNotFoundException::new);
 
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         if (!storeScrap.getUser().equals(user)) {
             throw new StoreScrapNotPermittedException();
@@ -123,7 +123,7 @@ public class StoreScrapService {
 
     @Transactional
     public void deleteByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 

@@ -10,7 +10,7 @@ import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
@@ -38,7 +38,7 @@ public class CommentService {
     public CommentResponseDto create(Long userId, Long postId, CommentRequestDto commentRequestDto){
 
         Post post = postService.findPostByPostId(postId);
-        User user = userService.findById(userId).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         Comment comment = Comment.builder()
                                  .text(commentRequestDto.getText())

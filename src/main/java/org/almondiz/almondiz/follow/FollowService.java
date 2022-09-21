@@ -1,10 +1,10 @@
 package org.almondiz.almondiz.follow;
 
 import lombok.RequiredArgsConstructor;
-import org.almondiz.almondiz.exception.exception.CFollowExistedException;
-import org.almondiz.almondiz.exception.exception.CFollowNotFoundException;
-import org.almondiz.almondiz.exception.exception.CFollowNotPermittedException;
-import org.almondiz.almondiz.exception.exception.CUserNotFoundException;
+import org.almondiz.almondiz.exception.exception.FollowExistedException;
+import org.almondiz.almondiz.exception.exception.FollowNotFoundException;
+import org.almondiz.almondiz.exception.exception.FollowNotPermittedException;
+import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
@@ -26,12 +26,12 @@ public class FollowService {
 
     @Transactional
     public Follow create(String email, FollowRequestDto followRequestDto) {
-        User follower = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User follower = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-        User followee = userService.findById(followRequestDto.getFolloweeId()).orElseThrow(CUserNotFoundException::new);
+        User followee = userService.findById(followRequestDto.getFolloweeId()).orElseThrow(UserNotFoundException::new);
 
         if (followRepository.findByFollowerAndFollowee(follower, followee).isPresent()) {
-            throw new CFollowExistedException();
+            throw new FollowExistedException();
         }
 
         return followRepository.save(Follow.builder()
@@ -43,17 +43,17 @@ public class FollowService {
 
     @Transactional
     public void delete(String email, Long followId) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
-        Follow follow = followRepository.findById(followId).orElseThrow(CFollowNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
         if (!follow.getFollower().equals(user)) {
-            throw new CFollowNotPermittedException();
+            throw new FollowNotPermittedException();
         }
         followRepository.deleteById(followId);
     }
 
     @Transactional
     public List<FollowerResponseDto> findAllFollowers(String email) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
         return followRepository.findAllByFollowee(user)
                                .stream()
                                .map(follow -> FollowerResponseDto.builder()
@@ -68,7 +68,7 @@ public class FollowService {
 
     @Transactional
     public List<FollowingResponseDto> findAllFollowings(String email) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
         return followRepository.findAllByFollower(user)
                                .stream()
                                .map(follow -> FollowingResponseDto.builder()
@@ -84,10 +84,10 @@ public class FollowService {
 
     @Transactional
     public void setAlias(String email, Long followId, String alias) {
-        User user = userService.findByEmail(email).orElseThrow(CUserNotFoundException::new);
-        Follow follow = followRepository.findById(followId).orElseThrow(CFollowNotFoundException::new);
+        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
         if (!follow.getFollower().equals(user)) {
-            throw new CFollowNotPermittedException();
+            throw new FollowNotPermittedException();
         }
         follow.updateAlias(alias);
         followRepository.save(follow);
