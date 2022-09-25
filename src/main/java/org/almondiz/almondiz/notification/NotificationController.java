@@ -26,8 +26,8 @@ public class NotificationController {
     @GetMapping("/notifications")
     public CommonResult findByUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return  responseService.getListResult(notificationService.findAllByUser(email));
+        String uid = authentication.getName();
+        return  responseService.getListResult(notificationService.findAllByUser(uid));
     }
 
     @ApiImplicitParams({
@@ -36,8 +36,8 @@ public class NotificationController {
     @PatchMapping("/notification/{notId}")
     public CommonResult readNotification(@PathVariable Long notId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        notificationService.read(email, notId);
+        String uid = authentication.getName();
+        notificationService.read(uid, notId);
         return responseService.getSuccessResult();
     }
 
@@ -47,8 +47,8 @@ public class NotificationController {
     @DeleteMapping("/notification/{notId}")
     public CommonResult delete(@PathVariable Long notId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        notificationService.delete(email, notId);
+        String uid = authentication.getName();
+        notificationService.delete(uid, notId);
         return responseService.getSuccessResult();
     }
 }
