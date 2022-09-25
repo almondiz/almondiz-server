@@ -26,8 +26,8 @@ public class FollowController {
     @PostMapping("/follow")
     public CommonResult create(@RequestBody FollowRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return responseService.getSingleResult(followService.create(email, requestDto));
+        String uid = authentication.getName();
+        return responseService.getSingleResult(followService.create(uid, requestDto));
     }
 
     @ApiImplicitParams({
@@ -36,8 +36,8 @@ public class FollowController {
     @DeleteMapping("/follow/{followId}")
     public CommonResult delete(@PathVariable Long followId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        followService.delete(email, followId);
+        String uid = authentication.getName();
+        followService.delete(uid, followId);
         return responseService.getSuccessResult();
     }
 
@@ -47,8 +47,8 @@ public class FollowController {
     @PatchMapping("/api/follow")
     public CommonResult setAlias(@RequestBody FollowRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        followService.setAlias(email, requestDto.getFolloweeId(), requestDto.getAlias());
+        String uid = authentication.getName();
+        followService.setAlias(uid, requestDto.getFolloweeId(), requestDto.getAlias());
         return responseService.getSuccessResult();
     }
 
@@ -58,8 +58,8 @@ public class FollowController {
     @GetMapping("/api/followings")
     public CommonResult getAllFollowings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return responseService.getListResult(followService.findAllFollowings(email));
+        String uid = authentication.getName();
+        return responseService.getListResult(followService.findAllFollowings(uid));
     }
 
     @ApiImplicitParams({
@@ -68,7 +68,7 @@ public class FollowController {
     @GetMapping("/api/followers")
     public CommonResult getAllFollowers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return responseService.getListResult(followService.findAllFollowers(email));
+        String uid = authentication.getName();
+        return responseService.getListResult(followService.findAllFollowers(uid));
     }
 }

@@ -25,8 +25,8 @@ public class FollowService {
     private final ProfileFileService profileFileService;
 
     @Transactional
-    public Follow create(String email, FollowRequestDto followRequestDto) {
-        User follower = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public Follow create(String uid, FollowRequestDto followRequestDto) {
+        User follower = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         User followee = userService.findById(followRequestDto.getFolloweeId()).orElseThrow(UserNotFoundException::new);
 
@@ -42,8 +42,8 @@ public class FollowService {
     }
 
     @Transactional
-    public void delete(String email, Long followId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void delete(String uid, Long followId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
         Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
         if (!follow.getFollower().equals(user)) {
             throw new FollowNotPermittedException();
@@ -52,8 +52,8 @@ public class FollowService {
     }
 
     @Transactional
-    public List<FollowerResponseDto> findAllFollowers(String email) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public List<FollowerResponseDto> findAllFollowers(String uid) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
         return followRepository.findAllByFollowee(user)
                                .stream()
                                .map(follow -> FollowerResponseDto.builder()
@@ -67,8 +67,8 @@ public class FollowService {
     }
 
     @Transactional
-    public List<FollowingResponseDto> findAllFollowings(String email) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public List<FollowingResponseDto> findAllFollowings(String uid) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
         return followRepository.findAllByFollower(user)
                                .stream()
                                .map(follow -> FollowingResponseDto.builder()
@@ -83,8 +83,8 @@ public class FollowService {
     }
 
     @Transactional
-    public void setAlias(String email, Long followId, String alias) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void setAlias(String uid, Long followId, String alias) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
         Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
         if (!follow.getFollower().equals(user)) {
             throw new FollowNotPermittedException();
