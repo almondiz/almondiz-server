@@ -41,57 +41,36 @@ public class NotificationService {
     }
 
     @Transactional
-    public List<NotificationResponseDto> findAllByUser(String email) {
-        Optional<User> user = userService.findByEmail(email);
+    public List<NotificationResponseDto> findAllByUser(String uid) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        if(user.isEmpty()){
-            throw new UserNotFoundException();
-        }
-
-        return notificationRepository.findAllByUser(user.get())
+        return notificationRepository.findAllByUser(user)
                                      .stream()
                                      .map(notification -> new NotificationResponseDto(notification))
                                      .collect(Collectors.toList());
     }
 
     @Transactional
-    public void read(String email, Long notificationId) {
-        Optional<User> user = userService.findByEmail(email);
+    public void read(String uid, Long notificationId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        if(user.isEmpty()){
-            throw new UserNotFoundException();
-        }
+        Notification notification = this.findById(notificationId).orElseThrow(NotificationNotFoundException::new);
 
-        Optional<Notification> notification = this.findById(notificationId);
-
-        if(notification.isEmpty()){
-            throw new NotificationNotFoundException();
-        }
-
-        if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
+        if(!notification.getUser().getUserId().equals(user.getUserId())){
             throw new NotificationNotPermittedException();
         }
 
-        Notification readNotification = notification.get();
-        readNotification.setRead(true);
-        notificationRepository.save(readNotification);
+        notification.setRead(true);
+        notificationRepository.save(notification);
     }
 
     @Transactional
-    public void delete(String email, Long notificationId) {
-        Optional<User> user = userService.findByEmail(email);
+    public void delete(String uid, Long notificationId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        if(user.isEmpty()){
-            throw new UserNotFoundException();
-        }
+        Notification notification = this.findById(notificationId).orElseThrow(NotificationNotFoundException::new);
 
-        Optional<Notification> notification = this.findById(notificationId);
-
-        if(notification.isEmpty()){
-            throw new NotificationNotFoundException();
-        }
-
-        if(!notification.get().getUser().getUserId().equals(user.get().getUserId())){
+        if(!notification.getUser().getUserId().equals(user.getUserId())){
             throw new NotificationNotPermittedException();
         }
 

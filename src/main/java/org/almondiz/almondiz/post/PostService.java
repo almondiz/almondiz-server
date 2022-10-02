@@ -131,8 +131,8 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto modifyPost(String email, Long postId, PostRequestDto postRequestDto) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public PostResponseDto modifyPost(String uid, Long postId, PostRequestDto postRequestDto) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
@@ -147,8 +147,8 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto deletePost(String email, Long postId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public PostResponseDto deletePost(String uid, Long postId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 

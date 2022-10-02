@@ -77,9 +77,9 @@ public class PostController {
     @ApiOperation(value = "post 삭제")
     public CommonResult deletePost(@PathVariable Long postId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        postService.deletePost(email, postId);
+        postService.deletePost(uid, postId);
         return responseService.getSuccessResult();
     }
 
@@ -90,9 +90,9 @@ public class PostController {
     @ApiOperation(value = "post 수정")
     public CommonResult modifyPost(@PathVariable Long postId, @RequestBody PostRequestDto postRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        postService.modifyPost(email, postId, postRequestDto);
+        postService.modifyPost(uid, postId, postRequestDto);
         return responseService.getSuccessResult();
     }
 

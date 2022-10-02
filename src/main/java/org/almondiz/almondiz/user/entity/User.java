@@ -42,10 +42,16 @@ public class User extends TimeStamped implements UserDetails {
     private Long userId;
 
     @Column(nullable = false)
-    private String email;
+    private String providerUid;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
+
+    @Column(nullable = false)
+    private String uid;
+
+    private String email;
 
     private LocalDateTime deletedAt;
 
@@ -70,7 +76,9 @@ public class User extends TimeStamped implements UserDetails {
     @JoinColumn(name = "nutId")
     private Nut nut;
 
-    public User(String email, ProfileFile profileFile, Tag tag, Nut nut, ProviderType providerType, Role role){
+    public User(String uid, String providerUid, String email, ProfileFile profileFile, Tag tag, Nut nut, ProviderType providerType, Role role){
+        this.uid =uid;
+        this.providerUid = providerUid;
         this.email = email;
         this.profileFile = profileFile;
         this.tag = tag;
@@ -85,7 +93,6 @@ public class User extends TimeStamped implements UserDetails {
         this.tag = tag;
         this.nut = nut;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -103,7 +110,7 @@ public class User extends TimeStamped implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.getEmail();
+        return this.getUid();
     }
 
     @Override

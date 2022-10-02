@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping(value = "/user/login")
     @ApiOperation(value = "로그인")
     public CommonResult logIn(@RequestBody UserLogInDto logInDto){
-        Token token = authService.signIn(logInDto.getUserEmail());
+        Token token = authService.signIn(logInDto.getProviderUid(), logInDto.getProviderType());
         return responseService.getSingleResult(token);
     }
 
@@ -49,8 +49,8 @@ public class UserController {
     @ApiOperation(value = "AccessToken 재발급", notes = "RefreshToken을 헤더에 넣어 AccessToken을 재발급 받는다")
     public CommonResult getAccessTokenByRefreshToken(@RequestHeader(value = "AUTH-TOKEN") String refreshToken) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Token token = authService.refreshTokenAccessToken(email, refreshToken);
+        String uid = authentication.getName();
+        Token token = authService.refreshTokenAccessToken(uid, refreshToken);
         return responseService.getSingleResult(token);
     }
 
@@ -67,8 +67,8 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public SingleResult<UserResponseDto> findUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return responseService.getSingleResult(userService.getUserByEmail(email));
+        String uid = authentication.getName();
+        return responseService.getSingleResult(userService.getUserByUid(uid));
     }
 
     @ApiImplicitParams({
@@ -78,8 +78,8 @@ public class UserController {
     @ApiOperation(value = "회원 탈퇴")
     public CommonResult deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        userService.deleteUserByEmail(email);
+        String uid = authentication.getName();
+        userService.deleteUserByUid(uid);
         return responseService.getSuccessResult();
     }
 
@@ -90,10 +90,9 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정")
     public CommonResult modifyUser(@RequestBody UserRequestDto userRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        userService.modifyUser(email, userRequestDto);
+        String uid = authentication.getName();
+        userService.modifyUser(uid, userRequestDto);
         return responseService.getSuccessResult();
     }
-
 }
 

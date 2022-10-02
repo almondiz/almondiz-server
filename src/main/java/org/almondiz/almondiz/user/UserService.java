@@ -36,6 +36,9 @@ public class UserService {
     }
 
     @Transactional
+    public Optional<User> findByUid(String uid) {return userRepository.findByUid(uid);}
+
+    @Transactional
     public List<UserResponseDto> getAllUsers(){
       return userRepository.findAll()
           .stream()
@@ -64,8 +67,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto getUserByEmail(String email){
-        User user = findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public UserResponseDto getUserByUid(String uid){
+        User user = findByUid(uid).orElseThrow(UserNotFoundException::new);
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
@@ -73,8 +76,8 @@ public class UserService {
     }
 	
 	@Transactional
-    public UserResponseDto modifyUser(String email, UserRequestDto userRequestDto){
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public UserResponseDto modifyUser(String uid, UserRequestDto userRequestDto){
+        User user = userRepository.findByUid(uid).orElseThrow(UserNotFoundException::new);
         ProfileFile profileFile = profileFileService.getProfileFileById(userRequestDto.getProfileId());
         Tag tag = tagService.getTagById(userRequestDto.getTagId());
         Nut nut = nutService.getNutById(userRequestDto.getNutId());
@@ -84,8 +87,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto deleteUserByEmail(String email){
-        User user = findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public UserResponseDto deleteUserByUid(String uid){
+        User user = findByUid(uid).orElseThrow(UserNotFoundException::new);
         user.setStatus(Status.DELETED);
         userRepository.save(user);
         return getUser(user.getUserId());

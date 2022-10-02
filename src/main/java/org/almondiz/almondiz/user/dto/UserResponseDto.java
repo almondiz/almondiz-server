@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.almondiz.almondiz.user.entity.ProviderType;
 import org.almondiz.almondiz.user.entity.Role;
 import org.almondiz.almondiz.user.entity.User;
 
@@ -13,6 +14,9 @@ import org.almondiz.almondiz.user.entity.User;
 @NoArgsConstructor
 public class UserResponseDto {
     private Long userId;
+
+    private ProviderType providerType;
+
     private String email;
     private Role role;
     private String profileImgUrl;
@@ -24,6 +28,7 @@ public class UserResponseDto {
         this.role = user.getRole();
         this.profileImgUrl = profileImgUrl;
         this.nickName = nickName;
+        this.providerType = user.getProviderType();
     }
 
 }

@@ -36,11 +36,11 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto create(String email, Long postId, CommentRequestDto commentRequestDto){
+    public CommentResponseDto create(String uid, Long postId, CommentRequestDto commentRequestDto){
 
         Post post = postService.findPostByPostId(postId);
 
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.save(Comment.builder()
                                                         .text(commentRequestDto.getText())
@@ -69,8 +69,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto update(String email, Long commentId, CommentRequestDto commentRequestDto){
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public CommentResponseDto update(String uid, Long commentId, CommentRequestDto commentRequestDto){
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
@@ -84,8 +84,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(String email, Long commentId){
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void delete(String uid, Long commentId){
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 

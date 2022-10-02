@@ -34,9 +34,9 @@ public class StoreScrapController {
     @ApiOperation(value = "사용자별 업체별 업체 스크랩 조회")
     public CommonResult getStoreScrapByUserAndStore(@PathVariable Long storeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        return responseService.getSingleResult(storeScrapService.getStoreScrapByUserAndStore(email, storeId));
+        return responseService.getSingleResult(storeScrapService.getStoreScrapByUserAndStore(uid, storeId));
     }
 
     @ApiImplicitParams({
@@ -46,9 +46,9 @@ public class StoreScrapController {
     @ApiOperation(value = "사용자별 업체별 업체 스크랩 유무 조회")
     public CommonResult isScrapByUserAndStore(@PathVariable Long storeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        boolean isScrap = storeScrapService.isScrapByUserAndStore(email, storeId);
+        boolean isScrap = storeScrapService.isScrapByUserAndStore(uid, storeId);
 
         if(!isScrap) {
             return responseService.getFailResult();
@@ -64,9 +64,9 @@ public class StoreScrapController {
     @ApiOperation(value = "사용자별 업체 스크랩 목록 조회")
     public CommonResult getAllStoreScrapByUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        return responseService.getListResult(storeScrapService.getAllStoreScrapByUser(email));
+        return responseService.getListResult(storeScrapService.getAllStoreScrapByUser(uid));
     }
 
     @GetMapping(value = "/storeScraps/{storeId}")
@@ -82,9 +82,9 @@ public class StoreScrapController {
     @ApiOperation(value = "업체 스크랩 생성")
     public CommonResult create(@PathVariable Long storeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        return responseService.getSingleResult(storeScrapService.create(email, storeId));
+        return responseService.getSingleResult(storeScrapService.create(uid, storeId));
     }
 
     @ApiImplicitParams({
@@ -94,9 +94,9 @@ public class StoreScrapController {
     @ApiOperation(value = "스크랩 Id로 업체 스크랩 삭제")
     public CommonResult deleteByScrapId(@PathVariable Long storeScrapId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        storeScrapService.deleteById(email, storeScrapId);
+        storeScrapService.deleteById(uid, storeScrapId);
 
         return responseService.getSuccessResult();
     }
@@ -108,9 +108,9 @@ public class StoreScrapController {
     @ApiOperation(value = "업체 Id로 업체 스크랩 삭제")
     public CommonResult deleteByStoreId(@PathVariable Long storeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        storeScrapService.deleteByUserAndStore(email,storeId);
+        storeScrapService.deleteByUserAndStore(uid,storeId);
 
         return responseService.getSuccessResult();
     }

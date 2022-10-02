@@ -45,9 +45,9 @@ public class CommentController {
     @ApiOperation(value="post에 댓글 추가")
     public SingleResult<CommentResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        CommentResponseDto commentResponseDto = commentService.create(email, postId, commentRequestDto);
+        CommentResponseDto commentResponseDto = commentService.create(uid, postId, commentRequestDto);
         return responseService.getSingleResult(commentResponseDto);
     }
 
@@ -58,9 +58,9 @@ public class CommentController {
     @ApiOperation(value="댓글 삭제")
     public CommonResult deleteComment(@PathVariable Long commentId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        commentService.delete(email, commentId);
+        commentService.delete(uid, commentId);
         return responseService.getSuccessResult();
     }
 
@@ -71,10 +71,9 @@ public class CommentController {
     @ApiOperation(value="댓글 수정")
     public SingleResult<CommentResponseDto> modifyComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        CommentResponseDto commentResponseDto = commentService.update(email, commentId, commentRequestDto);
+        CommentResponseDto commentResponseDto = commentService.update(uid, commentId, commentRequestDto);
         return responseService.getSingleResult(commentResponseDto);
     }
-
 }

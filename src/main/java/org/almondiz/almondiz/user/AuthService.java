@@ -50,7 +50,7 @@ public class AuthService implements UserDetailsService {
 
     private static final String REFRESH_TOKEN_SUBJECT = "almondiz-refresh-token";
 
-    private static final String TOKEN_CLAIM = "email";
+    private static final String TOKEN_CLAIM = "almondiz-uid";
 
     private static final String TOKEN_ISSUER = "almondiz";
 
@@ -64,19 +64,30 @@ public class AuthService implements UserDetailsService {
     private final JWTVerifier jwtVerifier = JWT.require(algorithm).withIssuer(TOKEN_ISSUER).build();
 
     @Override
-    public UserDetails loadUserByUsername(String userEmail) {
-        return userService.findByEmail(userEmail).orElseThrow(UserNotFoundException::new);
+    public UserDetails loadUserByUsername(String uid) {
+        return userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
     }
 
-    public Token signIn(String userEmail) {
-        userService.findByEmail(userEmail).orElseThrow(UserNotFoundException::new);
-        return createToken(userEmail);
+    public Token signIn(String providerUid, ProviderType providerType) {
+        User user = userService.findByUid(setUidFromProvider(providerUid, providerType)).orElseThrow(UserNotFoundException::new);
+        return createToken(user.getUid());
+    }
+
+    private String setUidFromProvider(String providerUid, ProviderType providerType) {
+        return providerType.toString()+providerUid;
     }
 
     @Transactional
     public Token signup(UserRegisterDto userRegisterDto) {
-        if (nonNull(ValidStringUtils.getValidEmail(userRegisterDto.getEmail())) && userService.findByEmail(userRegisterDto.getEmail()).isPresent()) {
+        String uid = setUidFromProvider(userRegisterDto.getProviderUid(), userRegisterDto.getProviderType());
+
+        if(userService.findByUid(uid).isPresent()) {
             throw new AccountExistedException();
+        }
+
+        String email = null;
+        if(nonNull(userRegisterDto.getEmail())) {
+            email = ValidStringUtils.getValidEmail(userRegisterDto.getEmail());
         }
 
         ProfileFile profileFile = profileFileService.getProfileFileById(userRegisterDto.getProfileId());
@@ -85,17 +96,17 @@ public class AuthService implements UserDetailsService {
 
         Nut nut = nutService.getNutById(userRegisterDto.getNutId());
 
-        User user = new User(userRegisterDto.getEmail(),profileFile, tag, nut, ProviderType.GOOGLE, Role.USER);
+        User user = new User(uid, userRegisterDto.getProviderUid(), userRegisterDto.getEmail(), profileFile, tag, nut, userRegisterDto.getProviderType(), Role.USER);
         userService.saveUser(user);
-        return createToken(user.getEmail());
+        return createToken(user.getUid());
     }
 
-    private Token createToken(String userEmail) {
+    private Token createToken(String uid) {
         Date now = new Date();
 
-        String newAccessToken = createAccessToken(userEmail, now);
+        String newAccessToken = createAccessToken(uid, now);
 
-        String newRefreshToken = createRefreshToken(userEmail, now);
+        String newRefreshToken = createRefreshToken(uid, now);
 
         return Token.builder()
                     .accessToken(newAccessToken)
@@ -103,28 +114,28 @@ public class AuthService implements UserDetailsService {
                     .build();
     }
 
-    private String createAccessToken(String userEmail, Date now) {
+    private String createAccessToken(String uid, Date now) {
         return JWT.create()
                   .withIssuer(TOKEN_ISSUER)
                   .withIssuedAt(now)
                   .withExpiresAt(new Date(now.getTime() + ACCESS_TOKEN_VALID_MILISECOND))
                   .withSubject(ACCESS_TOKEN_SUBJECT)
-                  .withClaim(TOKEN_CLAIM, userEmail)
+                  .withClaim(TOKEN_CLAIM, uid)
                   .sign(algorithm);
     }
 
-    private String createRefreshToken(String userEmail, Date now) {
+    private String createRefreshToken(String uid, Date now) {
         return JWT.create()
                   .withIssuer(TOKEN_ISSUER)
                   .withIssuedAt(now)
                   .withExpiresAt(new Date(now.getTime() + REFRESH_TOKEN_VALID_MILISECOND))
                   .withSubject(REFRESH_TOKEN_SUBJECT)
-                  .withClaim(TOKEN_CLAIM, userEmail)
+                  .withClaim(TOKEN_CLAIM, uid)
                   .sign(algorithm);
     }
 
     @Transactional
-    public Token refreshTokenAccessToken(String userEmail, String refreshToken) {
+    public Token refreshTokenAccessToken(String uid, String refreshToken) {
         if (getDecodedToken(refreshToken).isPresent()) {
             Date now = new Date();
             DecodedJWT decodedJWT = getDecodedToken(refreshToken).get();
@@ -132,11 +143,11 @@ public class AuthService implements UserDetailsService {
                 throw new RefreshTokenException();
             }
             if (decodedJWT.getExpiresAt().after(now)) {
-                String newAccessToken = createAccessToken(userEmail, now);
+                String newAccessToken = createAccessToken(uid, now);
                 String newRefreshToken = refreshToken;
                 if (decodedJWT.getExpiresAt()
                               .before(new Date(now.getTime() + (1000L * 60 * 60 * 24 * 30)))) {
-                    newRefreshToken = createRefreshToken(userEmail, now);
+                    newRefreshToken = createRefreshToken(uid, now);
                 }
                 return Token.builder()
                             .accessToken(newAccessToken)
@@ -157,8 +168,8 @@ public class AuthService implements UserDetailsService {
 
     public User loadUserByToken(String token) {
         return getDecodedToken(token)
-            .map(this::getUserEmailFromToken)
-            .flatMap(userService::findByEmail)
+            .map(this::getUserUidFromToken)
+            .flatMap(userService::findByUid)
             .orElseThrow(TokenUserNotFoundException::new);
     }
 
@@ -170,7 +181,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    private String getUserEmailFromToken(DecodedJWT decodedJWT) {
+    private String getUserUidFromToken(DecodedJWT decodedJWT) {
         return decodedJWT.getClaim(TOKEN_CLAIM).asString();
     }
 

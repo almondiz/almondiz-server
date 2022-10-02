@@ -130,4 +130,52 @@ public class ExceptionAdvice {
     protected CommonResult CommentNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 댓글에 접근할 수 없습니다.");
     }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult CommentNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 댓글이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(AccountExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult AccountExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("주어진 정보에 대한 회원 계정이 이미 존재합니다.");
+    }
+
+    @ExceptionHandler(NutNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult NutNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 nut 정보가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(PostFileNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostFileNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 postfile 정보가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(ProfileFileNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ProfileFileNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 profilefile 정보가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 게시글이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(StoreNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult StoreNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 식당이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(TagNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult TagNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 태그가 존재하지 않습니다.");
+    }
 }

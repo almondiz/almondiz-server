@@ -38,8 +38,8 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public StoreScrapResponseDto getStoreScrapByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public StoreScrapResponseDto getStoreScrapByUserAndStore(String uid, Long storeId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -49,8 +49,8 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public boolean isScrapByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public boolean isScrapByUserAndStore(String uid, Long storeId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -63,8 +63,8 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public List<StoreScrapResponseDto> getAllStoreScrapByUser(String email) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public List<StoreScrapResponseDto> getAllStoreScrapByUser(String uid) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         return storeScrapRepository.findAllByUser(user)
                                    .stream()
@@ -83,8 +83,8 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public StoreScrapResponseDto create(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public StoreScrapResponseDto create(String uid, Long storeId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
@@ -108,10 +108,10 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public void deleteById(String email, Long scrapId) {
+    public void deleteById(String uid, Long scrapId) {
         StoreScrap storeScrap = storeScrapRepository.findById(scrapId).orElseThrow(StoreScrapNotFoundException::new);
 
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         if (!storeScrap.getUser().equals(user)) {
             throw new StoreScrapNotPermittedException();
@@ -122,8 +122,8 @@ public class StoreScrapService {
     }
 
     @Transactional
-    public void deleteByUserAndStore(String email, Long storeId) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void deleteByUserAndStore(String uid, Long storeId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Store store = storeService.getStoreById(storeId);
 
