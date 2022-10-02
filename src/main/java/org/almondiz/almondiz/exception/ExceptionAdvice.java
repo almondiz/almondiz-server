@@ -95,27 +95,27 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("옳지 않은 이메일입니다. 이메일 형식을 확인해주세요");
     }
 
-    @ExceptionHandler(StoreExistedException.class)
+    @ExceptionHandler(ShopExistedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult StoreExistedException(HttpServletRequest request, Exception e) {
+    protected CommonResult ShopExistedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 위치의 상호명은 이미 존재합니다.");
     }
 
-    @ExceptionHandler(StoreScrapExistedException.class)
+    @ExceptionHandler(ShopScrapExistedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult StoreScrapExistedException(HttpServletRequest request, Exception e) {
+    protected CommonResult ShopScrapExistedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("사용자는 해당 업체를 이미 스크랩하였습니다.");
     }
 
-    @ExceptionHandler(StoreScrapNotFoundException.class)
+    @ExceptionHandler(ShopScrapNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult StoreScrapNotFoundException(HttpServletRequest request, Exception e) {
+    protected CommonResult ShopScrapNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 업체스크랩은 존재하지 않습니다");
     }
 
-    @ExceptionHandler(StoreScrapNotPermittedException.class)
+    @ExceptionHandler(ShopScrapNotPermittedException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult StoreScrapNotPermittedException(HttpServletRequest request, Exception e) {
+    protected CommonResult ShopScrapNotPermittedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 권한으로 업체 스크랩에 접근할 수 없습니다.");
     }
 
@@ -167,9 +167,9 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 게시글이 존재하지 않습니다.");
     }
 
-    @ExceptionHandler(StoreNotFoundException.class)
+    @ExceptionHandler(ShopNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult StoreNotFoundException(HttpServletRequest request, Exception e) {
+    protected CommonResult ShopNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 식당이 존재하지 않습니다.");
     }
 

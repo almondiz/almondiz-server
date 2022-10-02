@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.store.entity;
+package org.almondiz.almondiz.shop.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +10,9 @@ import org.almondiz.almondiz.category.entity.Category;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreRequestDto {
+public class ShopRequestDto {
 
-    private String storeName;
+    private String shopName;
 
     private Category category;
 

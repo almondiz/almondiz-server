@@ -19,9 +19,9 @@ import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
-import org.almondiz.almondiz.store.StoreService;
-import org.almondiz.almondiz.store.entity.Store;
-import org.almondiz.almondiz.store.entity.StoreResponseDto;
+import org.almondiz.almondiz.shop.ShopService;
+import org.almondiz.almondiz.shop.entity.Shop;
+import org.almondiz.almondiz.shop.entity.ShopResponseDto;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.tagpost.TagPostService;
@@ -38,7 +38,7 @@ public class PostService {
 
     private final UserService userService;
 
-    private final StoreService storeService;
+    private final ShopService shopService;
 
     private final PostFileService postFileService;
 
@@ -51,11 +51,11 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(String email, PostRequestDto postRequestDto) {
         User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        Store store = storeService.getStoreById(postRequestDto.getStoreId());
+        Shop shop = shopService.getShopById(postRequestDto.getShopId());
 
         Post post = Post.builder()
                         .user(user)
-                        .store(store)
+                        .shop(shop)
                         .content(postRequestDto.getContent())
                         .status(Status.ALIVE)
                         .build();
@@ -82,7 +82,7 @@ public class PostService {
 
         UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
 
-        StoreResponseDto store = storeService.getStoreDto(post.getStore());
+        ShopResponseDto shop = shopService.getShopDto(post.getShop());
 
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
 
@@ -90,7 +90,7 @@ public class PostService {
 
         CommentResponseDto bestComment = this.getBestCommentByPostId(postId);
 
-        return new PostInFeedResponseDto(post, postFileImgUrls, user, store, tagList, bestComment, post.getCreatedAt(), post.getModifiedAt());
+        return new PostInFeedResponseDto(post, postFileImgUrls, user, shop, tagList, bestComment, post.getCreatedAt(), post.getModifiedAt());
     }
 
     @Transactional
@@ -99,7 +99,7 @@ public class PostService {
 
         UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
 
-        StoreResponseDto store = storeService.getStoreDto(post.getStore());
+        ShopResponseDto shop = shopService.getShopDto(post.getShop());
 
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
 
@@ -107,7 +107,7 @@ public class PostService {
 
         List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
 
-        return new PostResponseDto(post, postFileImgUrls, user, store, tagList, commentList, post.getCreatedAt(), post.getModifiedAt());
+        return new PostResponseDto(post, postFileImgUrls, user, shop, tagList, commentList, post.getCreatedAt(), post.getModifiedAt());
     }
 
     @Transactional
@@ -121,10 +121,10 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostResponseDto> getPostsByStoreId(Long storeId) {
-        Store store = storeService.getStoreById(storeId);
+    public List<PostResponseDto> getPostsByShopId(Long shopId) {
+        Shop shop = shopService.getShopById(shopId);
 
-        return postRepository.findByStore(store)
+        return postRepository.findByShop(shop)
                              .stream()
                              .map(post -> this.getPostDtoById(post.getPostId()))
                              .collect(Collectors.toList());
@@ -136,7 +136,7 @@ public class PostService {
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
-        if(!post.getUser().equals(user)){
+        if (!post.getUser().equals(user)) {
             throw new PostNotPermittedException();
         }
 
@@ -152,7 +152,7 @@ public class PostService {
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
-        if(!post.getUser().equals(user)){
+        if (!post.getUser().equals(user)) {
             throw new PostNotPermittedException();
         }
 

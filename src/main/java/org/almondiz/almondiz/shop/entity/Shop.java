@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.store.entity;
+package org.almondiz.almondiz.shop.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,15 +20,15 @@ import org.almondiz.almondiz.common.TimeStamped;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "Store_Table")
-public class Store extends TimeStamped {
+@Table(name = "Shop_Table")
+public class Shop extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    private Long shopId;
 
     @Column(nullable = false)
-    private String storeName;
+    private String shopName;
 
     // @ManyToOne(targetEntity = User.class)
     // @JoinColumn(name = "ownerId")

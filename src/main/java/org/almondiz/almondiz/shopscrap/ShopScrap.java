@@ -1,9 +1,9 @@
-package org.almondiz.almondiz.storescrap;
+package org.almondiz.almondiz.shopscrap;
 
 import lombok.*;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
-import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.user.entity.User;
 
 import javax.persistence.*;
@@ -13,8 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "StoreScrap_Table")
-public class StoreScrap extends TimeStamped {
+@Table(name = "ShopScrap_Table")
+public class ShopScrap extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class StoreScrap extends TimeStamped {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "storeId")
-    private Store store;
+    @JoinColumn(name = "shopId")
+    private Shop shop;
 
     @Setter
     @Enumerated(EnumType.STRING)

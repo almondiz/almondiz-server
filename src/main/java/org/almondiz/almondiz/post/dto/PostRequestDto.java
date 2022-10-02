@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostRequestDto {
-    private Long storeId;
+    private Long shopId;
 
     private String content;
 }
