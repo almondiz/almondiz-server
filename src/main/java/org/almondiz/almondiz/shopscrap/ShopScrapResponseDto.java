@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.storescrap;
+package org.almondiz.almondiz.shopscrap;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -12,21 +12,21 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreScrapResponseDto {
+public class ShopScrapResponseDto {
 
     private Long scrapId;
 
     private Long userId;
 
-    private Long storeId;
+    private Long shopId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    public StoreScrapResponseDto(StoreScrap storeScrap) {
-        this.scrapId = storeScrap.getId();
-        this.userId = storeScrap.getUser().getUserId();
-        this.storeId = storeScrap.getStore().getStoreId();
-        this.createdAt = storeScrap.getCreatedAt();
+    public ShopScrapResponseDto(ShopScrap shopScrap) {
+        this.scrapId = shopScrap.getId();
+        this.userId = shopScrap.getUser().getUserId();
+        this.shopId = shopScrap.getShop().getShopId();
+        this.createdAt = shopScrap.getCreatedAt();
     }
 }

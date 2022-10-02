@@ -18,7 +18,7 @@ import lombok.Setter;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
-import org.almondiz.almondiz.store.entity.Store;
+import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.user.entity.User;
 
 @Builder
@@ -37,9 +37,9 @@ public class Post extends TimeStamped {
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne(targetEntity = Store.class)
-    @JoinColumn(name = "storeId")
-    private Store store;
+    @ManyToOne(targetEntity = Shop.class)
+    @JoinColumn(name = "shopId")
+    private Shop shop;
 
     private String content;
 

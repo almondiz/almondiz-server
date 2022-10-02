@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
-import org.almondiz.almondiz.store.entity.StoreResponseDto;
+import org.almondiz.almondiz.shop.entity.ShopResponseDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 
@@ -24,7 +24,7 @@ public class PostInFeedResponseDto {
     private String text;
     private List<String> postFileImgUrls;
     private UserAsWriterResponseDto user;
-    private StoreResponseDto store;
+    private ShopResponseDto store;
     private List<TagResponseDto> tags;
     private CommentResponseDto bestComment;
 
@@ -34,7 +34,7 @@ public class PostInFeedResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public PostInFeedResponseDto(Post post,  List<String> postFileImgUrls, UserAsWriterResponseDto user, StoreResponseDto store, List<TagResponseDto> tagList,
+    public PostInFeedResponseDto(Post post, List<String> postFileImgUrls, UserAsWriterResponseDto user, ShopResponseDto store, List<TagResponseDto> tagList,
                                  CommentResponseDto bestComment, LocalDateTime createdAt, LocalDateTime modifiedAt){
         this.postId = post.getPostId();
         this.text = post.getContent();

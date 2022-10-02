@@ -64,10 +64,10 @@ public class PostController {
         return responseService.getListResult(postService.getPostsByUserId(postByUserDto.getUserId()));
     }
 
-    @GetMapping(value="/store/{storeId}/posts")
+    @GetMapping(value="/store/{shopId}/posts")
     @ApiOperation(value = "상점별 post 조회")
-    public ListResult<PostResponseDto> findPostsByStoreId(@PathVariable Long storeId){
-        return responseService.getListResult(postService.getPostsByStoreId(storeId));
+    public ListResult<PostResponseDto> findPostsByStoreId(@PathVariable Long shopId){
+        return responseService.getListResult(postService.getPostsByShopId(shopId));
     }
 
     @ApiImplicitParams({

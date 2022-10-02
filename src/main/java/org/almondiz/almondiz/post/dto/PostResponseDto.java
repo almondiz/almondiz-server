@@ -10,8 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
-import org.almondiz.almondiz.store.entity.Store;
-import org.almondiz.almondiz.store.entity.StoreResponseDto;
+import org.almondiz.almondiz.shop.entity.ShopResponseDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 
@@ -20,12 +19,19 @@ import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponseDto {
+
     private Long postId;
+
     private String text;
+
     private List<String> postFileImgUrls;
+
     private UserAsWriterResponseDto user;
-    private StoreResponseDto store;
+
+    private ShopResponseDto shop;
+
     private List<TagResponseDto> tags;
+
     private List<CommentResponseDto> comments;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -34,13 +40,13 @@ public class PostResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public PostResponseDto(Post post,  List<String> postFileImgUrls, UserAsWriterResponseDto user, StoreResponseDto store, List<TagResponseDto> tagList,
+    public PostResponseDto(Post post, List<String> postFileImgUrls, UserAsWriterResponseDto user, ShopResponseDto shop, List<TagResponseDto> tagList,
                            List<CommentResponseDto> commentList, LocalDateTime createdAt, LocalDateTime modifiedAt){
         this.postId = post.getPostId();
         this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;
         this.user = user;
-        this.store = store;
+        this.shop = shop;
         this.tags = tagList;
         this.comments = commentList;
         this.createdAt = createdAt;
