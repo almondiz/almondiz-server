@@ -8,9 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
-import org.almondiz.almondiz.shop.entity.ShopResponseDto;
+import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 
@@ -22,34 +21,40 @@ public class PostResponseDto {
 
     private Long postId;
 
-    private String text;
-
-    private List<String> postFileImgUrls;
-
-    private UserSimpleResponseDto user;
-
-    private ShopResponseDto shop;
-
-    private List<TagResponseDto> tags;
-
-    private List<CommentResponseDto> comments;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public PostResponseDto(Post post, List<String> postFileImgUrls, UserSimpleResponseDto user, ShopResponseDto shop, List<TagResponseDto> tagList,
-                           List<CommentResponseDto> commentList, LocalDateTime createdAt, LocalDateTime modifiedAt){
+    private UserSimpleResponseDto user;
+
+    private ShopSimpleDto shop;
+
+    private List<TagResponseDto> tags;
+
+    private String text;
+
+    private List<String> postFileImgUrls;
+
+    private Long scrappedCount;
+
+    private boolean scrap;
+
+    private Long commentCount;
+
+    public PostResponseDto(Post post, List<String> postFileImgUrls, UserSimpleResponseDto user, ShopSimpleDto shop, List<TagResponseDto> tagList,
+                           Long scrappedCount, boolean scrap, Long commentCount) {
         this.postId = post.getPostId();
         this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;
         this.user = user;
         this.shop = shop;
         this.tags = tagList;
-        this.comments = commentList;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
+        this.scrappedCount = scrappedCount;
+        this.scrap = scrap;
+        this.commentCount = commentCount;
     }
 }

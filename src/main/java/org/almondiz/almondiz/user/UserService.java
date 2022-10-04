@@ -53,7 +53,6 @@ public class UserService {
     @Transactional
     public UserResponseDto getUser(Long userId){
         User user = findByUserId(userId).orElseThrow(UserNotFoundException::new);
-        String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
@@ -63,13 +62,19 @@ public class UserService {
 
     @Transactional
     public UserSimpleResponseDto getUserAsWriterResponseDto(Long userId){
-        return getUserSimpleResposneDto(userId);
+        return getUserSimpleResponseDto(userId);
     }
 
     @Transactional
-    public UserSimpleResponseDto getUserSimpleResposneDto(Long userId) {
+    public UserSimpleResponseDto getUserSimpleDtoByUid(String uid) {
+        User user = findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        return getUserSimpleResponseDto(user.getUserId());
+    }
+
+    @Transactional
+    public UserSimpleResponseDto getUserSimpleResponseDto(Long userId) {
         User user = findByUserId(userId).orElseThrow(UserNotFoundException::new);
-        String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;

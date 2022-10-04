@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.post.dto.PostByUserDto;
-import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
+import org.almondiz.almondiz.post.dto.PostSimpleResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.response.CommonResult;
@@ -38,35 +38,49 @@ public class PostController {
     })
     @PostMapping(value="/post")
     @ApiOperation(value="post 작성")
-    public SingleResult<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto){
+    public CommonResult createPost(@RequestBody PostRequestDto postRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String uid = authentication.getName();
 
-        PostResponseDto postResponseDto = postService.createPost(email, postRequestDto);
-        return responseService.getSingleResult(postResponseDto);
+        return responseService.getSingleResult(postService.createPost(uid, postRequestDto));
     }
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/posts")
     @ApiOperation(value = "모든 post 조회")
-    public ListResult<PostInFeedResponseDto> findAllPosts(){
+    public ListResult<PostSimpleResponseDto> findAllPosts(){
         return responseService.getListResult(postService.getAllPosts());
     }
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/post/{postId}")
     @ApiOperation(value = "post 단건 조회")
     public SingleResult<PostResponseDto> findPost(@PathVariable Long postId){
-        return responseService.getSingleResult(postService.getPostDtoById(postId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getSingleResult(postService.getPostResponseDto(uid, postId));
     }
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/user/posts")
     @ApiOperation(value = "사용자별 post 조회")
-    public ListResult<PostResponseDto> findPostsByUserId(@RequestBody PostByUserDto postByUserDto){
+    public CommonResult findPostsByUserId(@RequestBody PostByUserDto postByUserDto){
         return responseService.getListResult(postService.getPostsByUserId(postByUserDto.getUserId()));
     }
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/store/{shopId}/posts")
     @ApiOperation(value = "상점별 post 조회")
-    public ListResult<PostResponseDto> findPostsByStoreId(@PathVariable Long shopId){
+    public CommonResult findPostsByStoreId(@PathVariable Long shopId){
         return responseService.getListResult(postService.getPostsByShopId(shopId));
     }
 
