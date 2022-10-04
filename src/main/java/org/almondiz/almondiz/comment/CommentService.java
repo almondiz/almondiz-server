@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.comment.dto.CommentRequestDto;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
@@ -31,12 +32,12 @@ public class CommentService {
     private final UserService userService;
 
     @Transactional
-    public Optional<Comment> findById(Long commentId){
+    public Optional<Comment> findById(Long commentId) {
         return commentRepository.findById(commentId);
     }
 
     @Transactional
-    public CommentResponseDto create(String uid, Long postId, CommentRequestDto commentRequestDto){
+    public CommentResponseDto create(String uid, Long postId, CommentRequestDto commentRequestDto) {
 
         Post post = postService.findPostByPostId(postId);
 
@@ -53,7 +54,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentResponseDto> findAllByPostId(Long postId){
+    public List<CommentResponseDto> findAllByPostId(Long postId) {
         Post post = postService.findPostByPostId(postId);
         return commentRepository.findByPost(post)
                                 .stream().map(comment -> this.getCommentResponseDto(comment.getCommentId()))
@@ -69,12 +70,12 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto update(String uid, Long commentId, CommentRequestDto commentRequestDto){
+    public CommentResponseDto update(String uid, Long commentId, CommentRequestDto commentRequestDto) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
-        if(!comment.getUser().equals(user)){
+        if (!comment.getUser().equals(user)) {
             throw new CommentNotPermittedException();
         }
 
@@ -84,16 +85,21 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(String uid, Long commentId){
+    public void delete(String uid, Long commentId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
-        if(!comment.getUser().equals(user)){
+        if (!comment.getUser().equals(user)) {
             throw new CommentNotPermittedException();
         }
 
         comment.setStatus(Status.DELETED);
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    public Long getCommentCountByPost(Post post) {
+        return commentRepository.countByPost(post);
     }
 }

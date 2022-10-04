@@ -13,7 +13,7 @@ import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotPermittedException;
-import org.almondiz.almondiz.post.dto.PostInFeedResponseDto;
+import org.almondiz.almondiz.post.dto.PostSimpleResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
@@ -21,7 +21,7 @@ import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.shop.ShopService;
 import org.almondiz.almondiz.shop.entity.Shop;
-import org.almondiz.almondiz.shop.entity.ShopResponseDto;
+import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.tagpost.TagPostService;
@@ -42,14 +42,12 @@ public class PostService {
 
     private final PostFileService postFileService;
 
-    private final TagService tagService;
-
     private final TagPostService tagPostService;
 
     private final CommentRepository commentRepository;
 
     @Transactional
-    public PostResponseDto createPost(String email, PostRequestDto postRequestDto) {
+    public PostSimpleResponseDto createPost(String email, PostRequestDto postRequestDto) {
         User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
         Shop shop = shopService.getShopById(postRequestDto.getShopId());
 
@@ -60,11 +58,11 @@ public class PostService {
                         .status(Status.ALIVE)
                         .build();
 
-        return getPostDtoById(postRepository.save(post).getPostId());
+        return getPostSimpleDtoById(postRepository.save(post).getPostId());
     }
 
     @Transactional
-    public List<PostInFeedResponseDto> getAllPosts() {
+    public List<PostSimpleResponseDto> getAllPosts() {
         return postRepository.findAll()
                              .stream()
                              .map(post -> this.getPostInFeedResponseDtoByPostId(post.getPostId()))
@@ -77,61 +75,65 @@ public class PostService {
     }
 
     @Transactional
-    public PostInFeedResponseDto getPostInFeedResponseDtoByPostId(Long postId) {
+    public PostSimpleResponseDto getPostInFeedResponseDtoByPostId(Long postId) {
+        return getPostSimpleDtoById(postId);
+    }
+
+    @Transactional
+    public PostSimpleResponseDto getPostSimpleDtoById(Long postId) {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
-
-        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
-
-        ShopResponseDto shop = shopService.getShopDto(post.getShop());
 
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
 
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
 
-        CommentResponseDto bestComment = this.getBestCommentByPostId(postId);
-
-        return new PostInFeedResponseDto(post, postFileImgUrls, user, shop, tagList, bestComment, post.getCreatedAt(), post.getModifiedAt());
+        return new PostSimpleResponseDto(post, postFileImgUrls, tagList);
     }
 
     @Transactional
-    public PostResponseDto getPostDtoById(Long postId) {
-        Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+    public PostResponseDto getPostResponseDto(String uid, Long postId) {
+        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleDtoByUid(uid);
 
-        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+        Post post = findPostByPostId(postId);
 
-        ShopResponseDto shop = shopService.getShopDto(post.getShop());
+        ShopSimpleDto shopSimpleDto = new ShopSimpleDto(post.getShop());
 
         List<String> postFileImgUrls = postFileService.getFileUrlsByPost(post);
 
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
 
-        List<CommentResponseDto> commentList = this.findCommentsByPostId(postId);
+        // scrap 구현전
+        Long scrappedCount = 0L;
 
-        return new PostResponseDto(post, postFileImgUrls, user, shop, tagList, commentList, post.getCreatedAt(), post.getModifiedAt());
+        boolean scrap = true;
+
+        Long commentCount = commentRepository.countByPost(post);
+
+        return new PostResponseDto(post, postFileImgUrls, userSimpleResponseDto, shopSimpleDto, tagList, scrappedCount, scrap, commentCount);
     }
 
     @Transactional
-    public List<PostResponseDto> getPostsByUserId(Long userId) {
+    public List<PostSimpleResponseDto> getPostsByUserId(Long userId) {
         User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return postRepository.findByUser(user)
                              .stream()
-                             .map(post -> this.getPostDtoById(post.getPostId()))
+                             .map(post -> this.getPostSimpleDtoById(post.getPostId()))
                              .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostResponseDto> getPostsByShopId(Long shopId) {
+    public List<PostSimpleResponseDto> getPostsByShopId(Long shopId) {
         Shop shop = shopService.getShopById(shopId);
 
         return postRepository.findByShop(shop)
                              .stream()
-                             .map(post -> this.getPostDtoById(post.getPostId()))
+                             .map(post -> this.getPostSimpleDtoById(post.getPostId()))
                              .collect(Collectors.toList());
     }
 
     @Transactional
-    public PostResponseDto modifyPost(String uid, Long postId, PostRequestDto postRequestDto) {
+    public PostSimpleResponseDto modifyPost(String uid, Long postId, PostRequestDto postRequestDto) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
@@ -143,11 +145,11 @@ public class PostService {
         post.update(postRequestDto);
         postRepository.save(post);
 
-        return this.getPostDtoById(post.getPostId());
+        return this.getPostSimpleDtoById(post.getPostId());
     }
 
     @Transactional
-    public PostResponseDto deletePost(String uid, Long postId) {
+    public void deletePost(String uid, Long postId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
@@ -158,8 +160,6 @@ public class PostService {
 
         post.setStatus(Status.DELETED);
         postRepository.save(post);
-
-        return this.getPostDtoById(post.getPostId());
     }
 
     @Transactional
