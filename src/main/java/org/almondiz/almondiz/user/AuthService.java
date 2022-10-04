@@ -96,7 +96,7 @@ public class AuthService implements UserDetailsService {
 
         Nut nut = nutService.getNutById(userRegisterDto.getNutId());
 
-        User user = new User(uid, userRegisterDto.getProviderUid(), userRegisterDto.getEmail(), profileFile, tag, nut, userRegisterDto.getProviderType(), Role.USER);
+        User user = new User(uid, userRegisterDto.getProviderUid(), userRegisterDto.getEmail(), profileFile, tag, nut, userRegisterDto.getProviderType(), Role.USER, userRegisterDto.getThumb());
         userService.saveUser(user);
         return createToken(user.getUid());
     }

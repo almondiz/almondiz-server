@@ -12,7 +12,7 @@ import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.shop.entity.ShopResponseDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
-import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
+import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 
 @Getter
 @Builder
@@ -26,7 +26,7 @@ public class PostResponseDto {
 
     private List<String> postFileImgUrls;
 
-    private UserAsWriterResponseDto user;
+    private UserSimpleResponseDto user;
 
     private ShopResponseDto shop;
 
@@ -40,7 +40,7 @@ public class PostResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public PostResponseDto(Post post, List<String> postFileImgUrls, UserAsWriterResponseDto user, ShopResponseDto shop, List<TagResponseDto> tagList,
+    public PostResponseDto(Post post, List<String> postFileImgUrls, UserSimpleResponseDto user, ShopResponseDto shop, List<TagResponseDto> tagList,
                            List<CommentResponseDto> commentList, LocalDateTime createdAt, LocalDateTime modifiedAt){
         this.postId = post.getPostId();
         this.text = post.getContent();

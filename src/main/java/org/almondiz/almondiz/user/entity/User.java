@@ -37,6 +37,7 @@ public class User extends TimeStamped implements UserDetails {
 
     private static final String Role_PREFIX = "ROLE_";
 
+    // 디비 uid
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -48,6 +49,7 @@ public class User extends TimeStamped implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
+    // 토큰 사용자 식별 uid
     @Column(nullable = false)
     private String uid;
 
@@ -68,6 +70,10 @@ public class User extends TimeStamped implements UserDetails {
     @JoinColumn(name = "profileId")
     private ProfileFile profileFile;
 
+    private String emoji;
+
+    private String color;
+
     @ManyToOne(targetEntity = Tag.class)
     @JoinColumn(name = "tagId")
     private Tag tag;
@@ -76,7 +82,7 @@ public class User extends TimeStamped implements UserDetails {
     @JoinColumn(name = "nutId")
     private Nut nut;
 
-    public User(String uid, String providerUid, String email, ProfileFile profileFile, Tag tag, Nut nut, ProviderType providerType, Role role){
+    public User(String uid, String providerUid, String email, ProfileFile profileFile, Tag tag, Nut nut, ProviderType providerType, Role role, Thumb thumb){
         this.uid =uid;
         this.providerUid = providerUid;
         this.email = email;
@@ -86,12 +92,16 @@ public class User extends TimeStamped implements UserDetails {
         this.providerType = providerType;
         this.status = Status.ALIVE;
         this.role = role;
+        this.emoji = thumb.getEmoji();
+        this.color = thumb.getColor();
     }
 
-    public void update(ProfileFile profileFile, Tag tag, Nut nut){
+    public void update(ProfileFile profileFile, Tag tag, Nut nut, Thumb thumb){
         this.profileFile = profileFile;
         this.tag = tag;
         this.nut = nut;
+        this.emoji = thumb.getEmoji();
+        this.color = thumb.getColor();
     }
 
     @Override
