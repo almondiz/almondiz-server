@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.entity.Comment;
-import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
+import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 
 @Getter
 @Builder
@@ -24,9 +24,9 @@ public class CommentResponseDto {
     private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private UserAsWriterResponseDto user;
+    private UserSimpleResponseDto user;
 
-    public CommentResponseDto(Comment comment, UserAsWriterResponseDto user) {
+    public CommentResponseDto(Comment comment, UserSimpleResponseDto user) {
         this.commentId = comment.getCommentId();
         this.text = comment.getText();
         this.createdAt = comment.getCreatedAt();

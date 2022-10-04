@@ -26,7 +26,7 @@ import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
 import org.almondiz.almondiz.tagpost.TagPostService;
 import org.almondiz.almondiz.user.UserService;
-import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
+import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +80,7 @@ public class PostService {
     public PostInFeedResponseDto getPostInFeedResponseDtoByPostId(Long postId) {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
-        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
 
         ShopResponseDto shop = shopService.getShopDto(post.getShop());
 
@@ -97,7 +97,7 @@ public class PostService {
     public PostResponseDto getPostDtoById(Long postId) {
         Post post = postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
 
-        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
+        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(post.getUser().getUserId());
 
         ShopResponseDto shop = shopService.getShopDto(post.getShop());
 
@@ -175,7 +175,7 @@ public class PostService {
     public CommentResponseDto getCommentResponseDto(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             CommentNotFoundException::new);
-        UserAsWriterResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
         return new CommentResponseDto(comment, user);
     }

@@ -9,10 +9,7 @@ import org.almondiz.almondiz.response.CommonResult;
 import org.almondiz.almondiz.response.ListResult;
 import org.almondiz.almondiz.response.ResponseService;
 import org.almondiz.almondiz.response.SingleResult;
-import org.almondiz.almondiz.user.dto.UserLogInDto;
-import org.almondiz.almondiz.user.dto.UserRegisterDto;
-import org.almondiz.almondiz.user.dto.UserRequestDto;
-import org.almondiz.almondiz.user.dto.UserResponseDto;
+import org.almondiz.almondiz.user.dto.*;
 import org.almondiz.almondiz.user.entity.Token;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +51,9 @@ public class UserController {
         return responseService.getSingleResult(token);
     }
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/users")
     @ApiOperation(value = "모든 회원 조회")
     public ListResult<UserResponseDto> findAllUsers() {
@@ -64,11 +64,20 @@ public class UserController {
         @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @GetMapping(value="/user")
-    @ApiOperation(value = "회원 정보 조회")
-    public SingleResult<UserResponseDto> findUser() {
+    @ApiOperation(value = "내 정보 조회")
+    public SingleResult<UserResponseDto> findMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
         return responseService.getSingleResult(userService.getUserByUid(uid));
+    }
+
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
+    @GetMapping(value="/user/{userId}")
+    @ApiOperation(value = "회원 정보 조회")
+    public SingleResult<UserSimpleResponseDto> findUserInfo(@PathVariable Long userId) {
+        return responseService.getSingleResult(userService.getUserSimpleResposneDto(userId));
     }
 
     @ApiImplicitParams({

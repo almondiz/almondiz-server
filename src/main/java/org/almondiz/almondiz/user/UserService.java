@@ -14,9 +14,10 @@ import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.profileFile.entity.ProfileFile;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.entity.Tag;
-import org.almondiz.almondiz.user.dto.UserAsWriterResponseDto;
+import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.dto.UserRequestDto;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
+import org.almondiz.almondiz.user.entity.Thumb;
 import org.almondiz.almondiz.user.entity.User;
 import org.almondiz.almondiz.user.entity.UserRepository;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class UserService {
     public Optional<User> findByUid(String uid) {return userRepository.findByUid(uid);}
 
     @Transactional
+    public Optional<User> findByUserId(Long userId) {return userRepository.findById(userId);}
+
+    @Transactional
     public List<UserResponseDto> getAllUsers(){
       return userRepository.findAll()
           .stream()
@@ -48,22 +52,29 @@ public class UserService {
 
     @Transactional
     public UserResponseDto getUser(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = findByUserId(userId).orElseThrow(UserNotFoundException::new);
         String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
-        return new UserResponseDto(user, profileImgUrl, nickName);
+        Thumb thumb = new Thumb(user.getEmoji(), user.getColor());
+        return new UserResponseDto(user, thumb, nickName);
     }
 
     @Transactional
-    public UserAsWriterResponseDto getUserAsWriterResponseDto(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public UserSimpleResponseDto getUserAsWriterResponseDto(Long userId){
+        return getUserSimpleResposneDto(userId);
+    }
+
+    @Transactional
+    public UserSimpleResponseDto getUserSimpleResposneDto(Long userId) {
+        User user = findByUserId(userId).orElseThrow(UserNotFoundException::new);
         String profileImgUrl = user.getProfileFile().getFileUrl();
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
-        return new UserAsWriterResponseDto(user, profileImgUrl, nickName);
+        Thumb thumb = new Thumb(user.getEmoji(), user.getColor());
+        return new UserSimpleResponseDto(user, thumb, nickName);
     }
 
     @Transactional
@@ -72,7 +83,8 @@ public class UserService {
         String nutName = user.getNut().getNutName();
         String tagName = user.getTag().getTagName();
         String nickName = tagName + " " + nutName;
-        return new UserResponseDto(user, user.getProfileFile().getFileUrl(), nickName);
+        Thumb thumb = new Thumb(user.getEmoji(), user.getColor());
+        return new UserResponseDto(user, thumb, nickName);
     }
 	
 	@Transactional
@@ -81,7 +93,7 @@ public class UserService {
         ProfileFile profileFile = profileFileService.getProfileFileById(userRequestDto.getProfileId());
         Tag tag = tagService.getTagById(userRequestDto.getTagId());
         Nut nut = nutService.getNutById(userRequestDto.getNutId());
-        user.update(profileFile, tag, nut);
+        user.update(profileFile, tag, nut, userRequestDto.getThumb());
         userRepository.save(user);
         return this.getUser(user.getUserId());
     }
