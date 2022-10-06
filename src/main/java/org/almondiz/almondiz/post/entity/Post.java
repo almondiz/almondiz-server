@@ -43,6 +43,12 @@ public class Post extends TimeStamped {
 
     private String content;
 
+    @Column(nullable = false)
+    private double lati;
+
+    @Column(nullable = false)
+    private double longi;
+
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

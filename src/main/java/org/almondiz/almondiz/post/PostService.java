@@ -24,6 +24,7 @@ import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
+import org.almondiz.almondiz.tag.entity.Tag;
 import org.almondiz.almondiz.tagpost.TagPostService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
@@ -42,6 +43,8 @@ public class PostService {
 
     private final PostFileService postFileService;
 
+    private final TagService tagService;
+
     private final TagPostService tagPostService;
 
     private final CommentRepository commentRepository;
@@ -55,17 +58,39 @@ public class PostService {
                         .user(user)
                         .shop(shop)
                         .content(postRequestDto.getContent())
+                        .lati(postRequestDto.getLati())
+                        .longi(postRequestDto.getLongi())
                         .status(Status.ALIVE)
                         .build();
 
-        return getPostSimpleDtoById(postRepository.save(post).getPostId());
+        Post newPost = postRepository.save(post);
+
+        // 태그 등록
+        // postRequestDto.getTags().stream()
+        //               .map(tagId -> this.createTagPost(tagId, newPost));
+
+        // 이미지 등록
+
+        return getPostSimpleDtoById(newPost.getPostId());
+    }
+
+    // 태그 등록
+    private void createTagPost(Long tagId, Post post) {
+        Tag tag = tagService.getTagById(tagId);
+
+        tagPostService.create(post, tag);
+        //
+        // return TagResponseDto.builder()
+        //                      .tagId(tag.getTagId())
+        //                      .tagName(tag.getTagName())
+        //                      .build();
     }
 
     @Transactional
-    public List<PostSimpleResponseDto> getAllPosts() {
+    public List<PostResponseDto> getAllPosts(String uid) {
         return postRepository.findAll()
                              .stream()
-                             .map(post -> this.getPostInFeedResponseDtoByPostId(post.getPostId()))
+                             .map(post -> this.getPostResponseDto(uid, post.getPostId()))
                              .collect(Collectors.toList());
     }
 
@@ -113,22 +138,22 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostSimpleResponseDto> getPostsByUserId(Long userId) {
+    public List<PostResponseDto> getPostsByUserId(String uid, Long userId) {
         User user = userService.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return postRepository.findByUser(user)
                              .stream()
-                             .map(post -> this.getPostSimpleDtoById(post.getPostId()))
+                             .map(post -> this.getPostResponseDto(uid, post.getPostId()))
                              .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostSimpleResponseDto> getPostsByShopId(Long shopId) {
+    public List<PostResponseDto> getPostsByShopId(String uid, Long shopId) {
         Shop shop = shopService.getShopById(shopId);
 
         return postRepository.findByShop(shop)
                              .stream()
-                             .map(post -> this.getPostSimpleDtoById(post.getPostId()))
+                             .map(post -> this.getPostResponseDto(uid, post.getPostId()))
                              .collect(Collectors.toList());
     }
 

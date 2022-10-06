@@ -38,7 +38,7 @@ public class PostController {
     })
     @PostMapping(value="/post")
     @ApiOperation(value="post 작성")
-    public CommonResult createPost(@RequestBody PostRequestDto postRequestDto){
+    public SingleResult<PostSimpleResponseDto> createPost(@RequestBody PostRequestDto postRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
 
@@ -50,8 +50,11 @@ public class PostController {
     })
     @GetMapping(value="/posts")
     @ApiOperation(value = "모든 post 조회")
-    public ListResult<PostSimpleResponseDto> findAllPosts(){
-        return responseService.getListResult(postService.getAllPosts());
+    public ListResult<PostResponseDto> findAllPosts(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getListResult(postService.getAllPosts(uid));
     }
 
     @ApiImplicitParams({
@@ -71,8 +74,11 @@ public class PostController {
     })
     @GetMapping(value="/user/posts")
     @ApiOperation(value = "사용자별 post 조회")
-    public CommonResult findPostsByUserId(@RequestBody PostByUserDto postByUserDto){
-        return responseService.getListResult(postService.getPostsByUserId(postByUserDto.getUserId()));
+    public ListResult<PostResponseDto> findPostsByUserId(@RequestBody PostByUserDto postByUserDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getListResult(postService.getPostsByUserId(uid, postByUserDto.getUserId()));
     }
 
     @ApiImplicitParams({
@@ -80,8 +86,11 @@ public class PostController {
     })
     @GetMapping(value="/store/{shopId}/posts")
     @ApiOperation(value = "상점별 post 조회")
-    public CommonResult findPostsByStoreId(@PathVariable Long shopId){
-        return responseService.getListResult(postService.getPostsByShopId(shopId));
+    public ListResult<PostResponseDto> findPostsByStoreId(@PathVariable Long shopId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getListResult(postService.getPostsByShopId(uid, shopId));
     }
 
     @ApiImplicitParams({
