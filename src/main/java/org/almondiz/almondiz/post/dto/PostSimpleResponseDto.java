@@ -20,7 +20,7 @@ public class PostSimpleResponseDto {
     private List<String> postFileImgUrls;
     private List<TagResponseDto> tags;
 
-    public PostSimpleResponseDto(Post post, List<String> postFileImgUrls, List<TagResponseDto> tagList){
+    public PostSimpleResponseDto(Post post, List<String> postFileImgUrls, List<TagResponseDto> tagList) {
         this.shopId = post.getShop().getShopId();
         this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;

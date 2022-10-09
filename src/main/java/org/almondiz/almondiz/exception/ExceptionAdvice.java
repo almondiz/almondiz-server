@@ -178,4 +178,16 @@ public class ExceptionAdvice {
     protected CommonResult TagNotFoundException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 태그가 존재하지 않습니다.");
     }
+
+    @ExceptionHandler(TagPostNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult TagPostNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 게시글에 해당 태그가 되지 않은 상태입니다.");
+    }
+
+    @ExceptionHandler(TagExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult TagExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 태그가 이미 존재합니다.");
+    }
 }

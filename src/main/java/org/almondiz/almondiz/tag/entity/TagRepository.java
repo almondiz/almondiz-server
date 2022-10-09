@@ -7,4 +7,5 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findById(Long tagId);
 
+    Optional<Tag> findByTagName(String tagName);
 }
