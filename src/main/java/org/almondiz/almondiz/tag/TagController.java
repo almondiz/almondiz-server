@@ -73,7 +73,7 @@ public class TagController {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
-    @GetMapping(value = "/tag/{tagName}")
+    @GetMapping(value = "/tag/like/{tagName}")
     @ApiOperation(value = "tagName이 들어간 TagList 조회")
     public ListResult<Tag> findTagNameLike(@PathVariable String tagName) {
         return responseService.getListResult(tagService.findByTagNameLike(tagName));
