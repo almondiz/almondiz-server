@@ -65,25 +65,21 @@ public class PostService {
 
         Post newPost = postRepository.save(post);
 
-        // 태그 등록
-        // postRequestDto.getTags().stream()
-        //               .map(tagId -> this.createTagPost(tagId, newPost));
+        postRequestDto.getTags().forEach(tagId -> this.createTagPost(tagId, newPost));
 
-        // 이미지 등록
+        postRequestDto.getImages().forEach(url -> this.createPostFile(url, post));
 
         return getPostSimpleDtoById(newPost.getPostId());
     }
 
-    // 태그 등록
     private void createTagPost(Long tagId, Post post) {
         Tag tag = tagService.getTagById(tagId);
 
         tagPostService.create(post, tag);
-        //
-        // return TagResponseDto.builder()
-        //                      .tagId(tag.getTagId())
-        //                      .tagName(tag.getTagName())
-        //                      .build();
+    }
+
+    private void createPostFile(String imageUrl, Post post) {
+        postFileService.create(imageUrl, "url", post);
     }
 
     @Transactional

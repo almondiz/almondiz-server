@@ -1,17 +1,9 @@
 package org.almondiz.almondiz.postFile.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import javax.persistence.*;
+
+import lombok.*;
+import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.post.entity.Post;
 
@@ -35,5 +27,10 @@ public class PostFile extends TimeStamped {
     @ManyToOne(targetEntity = Post.class)
     @JoinColumn(name = "postId")
     private Post post;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
 }
