@@ -34,15 +34,15 @@ public class TagService {
     }
 
     @Transactional
-    public void create(String tagName) {
+    public Tag create(String tagName) {
         if (tagRepository.findByTagName(tagName).isPresent()) {
             throw new TagExistedException();
         }
 
-        tagRepository.save(Tag.builder()
-                              .tagName(tagName)
-                              .status(Status.ALIVE)
-                              .build());
+        return tagRepository.save(Tag.builder()
+                                     .tagName(tagName)
+                                     .status(Status.ALIVE)
+                                     .build());
     }
 
     @Transactional
@@ -59,5 +59,10 @@ public class TagService {
 
         tag.setStatus(Status.DELETED);
         tagRepository.save(tag);
+    }
+
+    @Transactional
+    public List<Tag> findByTagNameLike(String tagName) {
+        return tagRepository.findByTagNameLike(tagName);
     }
 }
