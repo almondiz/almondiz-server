@@ -1,6 +1,7 @@
 package org.almondiz.almondiz.exception;
 
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.response.CommonResult;
@@ -190,4 +191,23 @@ public class ExceptionAdvice {
     protected CommonResult TagExistedException(HttpServletRequest request, Exception e) {
         return responseService.getFailResultWithMsg("해당 태그가 이미 존재합니다.");
     }
+
+    @ExceptionHandler(PostScrapExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostScrapExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("사용자는 해당 리뷰를 이미 스크랩하였습니다.");
+    }
+
+    @ExceptionHandler(PostScrapNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostScrapNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 리뷰스크랩은 존재하지 않습니다");
+    }
+
+    @ExceptionHandler(PostScrapNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult PostScrapNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 권한으로 리뷰 스크랩에 접근할 수 없습니다.");
+    }
+
 }
