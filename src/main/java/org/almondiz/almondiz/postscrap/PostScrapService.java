@@ -2,12 +2,10 @@ package org.almondiz.almondiz.postscrap;
 
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.PostScrapExistedException;
-import org.almondiz.almondiz.exception.exception.PostScrapNotFoundException;
-import org.almondiz.almondiz.exception.exception.PostScrapNotPermittedException;
-import org.almondiz.almondiz.exception.exception.UserNotFoundException;
+import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
+import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ public class PostScrapService {
 
     private final UserService userService;
 
-    private final PostService postService;
+    private final PostRepository postRepository;
 
     @Transactional
     public PostScrap findPostScrapById(Long id) {
@@ -37,10 +35,15 @@ public class PostScrapService {
     }
 
     @Transactional
+    public Post findPostByPostId(Long postId) {
+        return postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
+    }
+
+    @Transactional
     public PostScrapResponseDto create(String uid, Long postId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        Post post = postService.findPostByPostId(postId);
+        Post post = this.findPostByPostId(postId);
 
         Optional<PostScrap> postScrap = postScrapRepository.findByUserAndPost(user, post);
 
@@ -80,7 +83,7 @@ public class PostScrapService {
 
     @Transactional
     public long findPostScrapCountByPost(Long postId) {
-        Post post = postService.findPostByPostId(postId);
+        Post post = this.findPostByPostId(postId);
 
         return postScrapRepository.countByPost(post);
     }
@@ -89,7 +92,7 @@ public class PostScrapService {
     public boolean isScrap(String uid, Long postId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        Post post = postService.findPostByPostId(postId);
+        Post post = this.findPostByPostId(postId);
 
         Optional<PostScrap> postScrap = postScrapRepository.findByUserAndPost(user, post);
 
@@ -114,7 +117,7 @@ public class PostScrapService {
     public void deletePostScrapByUserAndPost(String uid, Long postId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
-        Post post = postService.findPostByPostId(postId);
+        Post post = this.findPostByPostId(postId);
 
         PostScrap postScrap = postScrapRepository.findByUserAndPost(user, post).get();
 

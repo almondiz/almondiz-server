@@ -19,6 +19,7 @@ import org.almondiz.almondiz.post.dto.PostResponseDto;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
+import org.almondiz.almondiz.postscrap.PostScrapService;
 import org.almondiz.almondiz.shop.ShopService;
 import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
@@ -48,6 +49,8 @@ public class PostService {
     private final TagPostService tagPostService;
 
     private final CommentRepository commentRepository;
+
+    private final PostScrapService postScrapService;
 
     @Transactional
     public PostSimpleResponseDto createPost(String email, PostRequestDto postRequestDto) {
@@ -123,10 +126,9 @@ public class PostService {
 
         List<TagResponseDto> tagList = tagPostService.getTagsByPost(post);
 
-        // scrap 구현전
-        Long scrappedCount = 0L;
+        Long scrappedCount = postScrapService.findPostScrapCountByPost(postId);
 
-        boolean scrap = true;
+        boolean scrap = postScrapService.isScrap(uid, postId);
 
         Long commentCount = commentRepository.countByPost(post);
 
