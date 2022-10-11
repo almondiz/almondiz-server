@@ -53,8 +53,8 @@ public class PostService {
     private final PostScrapService postScrapService;
 
     @Transactional
-    public PostSimpleResponseDto createPost(String email, PostRequestDto postRequestDto) {
-        User user = userService.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public PostSimpleResponseDto createPost(String uid, PostRequestDto postRequestDto) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
         Shop shop = shopService.getShopById(postRequestDto.getShopId());
 
         Post post = Post.builder()
