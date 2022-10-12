@@ -210,4 +210,10 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 권한으로 리뷰 스크랩에 접근할 수 없습니다.");
     }
 
+    @ExceptionHandler(ReportExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReportExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 게시글은 이미 신고처리되었습니다.");
+    }
+
 }
