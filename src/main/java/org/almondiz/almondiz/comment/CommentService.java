@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.comment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +11,8 @@ import org.almondiz.almondiz.comment.dto.CommentRequestDto;
 import org.almondiz.almondiz.comment.dto.CommentResponseDto;
 import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
+import org.almondiz.almondiz.commentlike.CommentLike;
+import org.almondiz.almondiz.commentlike.CommentLikeRepository;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
@@ -31,13 +34,15 @@ public class CommentService {
 
     private final UserService userService;
 
+    private final CommentLikeRepository commentLikeRepository;
+
     @Transactional
     public Optional<Comment> findById(Long commentId) {
         return commentRepository.findById(commentId);
     }
 
     @Transactional
-    public CommentResponseDto create(String uid, Long postId, CommentRequestDto commentRequestDto) {
+    public void create(String uid, Long postId, CommentRequestDto commentRequestDto) {
 
         Post post = postService.findPostByPostId(postId);
 
@@ -48,29 +53,36 @@ public class CommentService {
                                                         .status(Status.ALIVE)
                                                         .post(post)
                                                         .user(user)
+                                                        .likedCount(0L)
                                                         .build());
-
-        return this.getCommentResponseDto(comment.getCommentId());
     }
 
     @Transactional
-    public List<CommentResponseDto> findAllByPostId(Long postId) {
+    public List<CommentResponseDto> findAllByPostId(Long postId, String uid) {
         Post post = postService.findPostByPostId(postId);
         return commentRepository.findByPost(post)
-                                .stream().map(comment -> this.getCommentResponseDto(comment.getCommentId()))
+                                .stream().map(comment -> this.getCommentResponseDto(comment.getCommentId(), uid))
                                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public CommentResponseDto getCommentResponseDto(Long commentId) {
+    public CommentResponseDto getCommentResponseDto(Long commentId, String uid) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
             CommentNotFoundException::new);
-        UserSimpleResponseDto user = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
-        return new CommentResponseDto(comment, user);
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentAndUser(comment, user);
+
+        UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+
+        List<String> reply = new ArrayList<>();
+
+        return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
     }
 
     @Transactional
-    public CommentResponseDto update(String uid, Long commentId, CommentRequestDto commentRequestDto) {
+    public void update(String uid, Long commentId, CommentRequestDto commentRequestDto) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
@@ -81,7 +93,6 @@ public class CommentService {
 
         comment.update(commentRequestDto);
         commentRepository.save(comment);
-        return this.getCommentResponseDto(commentId);
     }
 
     @Transactional

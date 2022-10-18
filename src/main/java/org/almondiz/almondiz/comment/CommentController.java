@@ -32,10 +32,16 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping(value="/post/{postId}/comments")
     @ApiOperation(value="해당 게시물의 댓글 목록 조회")
     public ListResult<CommentResponseDto> findAllCommentsByPost(@PathVariable Long postId){
-        return responseService.getListResult(commentService.findAllByPostId(postId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getListResult(commentService.findAllByPostId(postId, uid));
     }
 
     @ApiImplicitParams({
@@ -43,12 +49,12 @@ public class CommentController {
     })
     @PostMapping(value="/post/{postId}/comment")
     @ApiOperation(value="post에 댓글 추가")
-    public SingleResult<CommentResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto){
+    public CommonResult createComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
 
-        CommentResponseDto commentResponseDto = commentService.create(uid, postId, commentRequestDto);
-        return responseService.getSingleResult(commentResponseDto);
+        commentService.create(uid, postId, commentRequestDto);
+        return responseService.getSuccessResult();
     }
 
     @ApiImplicitParams({
@@ -69,11 +75,11 @@ public class CommentController {
     })
     @PatchMapping(value="/post/{postId}/comment/{commentId}")
     @ApiOperation(value="댓글 수정")
-    public SingleResult<CommentResponseDto> modifyComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto){
+    public CommonResult modifyComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
 
-        CommentResponseDto commentResponseDto = commentService.update(uid, commentId, commentRequestDto);
-        return responseService.getSingleResult(commentResponseDto);
+        commentService.update(uid, commentId, commentRequestDto);
+        return responseService.getSuccessResult();
     }
 }
