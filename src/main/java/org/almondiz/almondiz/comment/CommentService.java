@@ -37,8 +37,8 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
-    public Optional<Comment> findById(Long commentId) {
-        return commentRepository.findById(commentId);
+    public Comment findById(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
     }
 
     @Transactional
