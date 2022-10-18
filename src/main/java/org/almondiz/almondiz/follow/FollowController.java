@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api")
-@Api(tags = {"4. FOLLOW API"})
+@Api(tags = {"2. FOLLOW API"})
 public class FollowController {
 
     private final FollowService followService;

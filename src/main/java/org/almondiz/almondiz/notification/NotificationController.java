@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@Api(tags = {"5. NOTIFICATION API"})
+@Api(tags = {"3. NOTIFICATION API"})
 @RequestMapping(value = "/api")
 public class NotificationController {
 
