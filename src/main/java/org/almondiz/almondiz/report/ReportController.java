@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value="/api")
-@Api(tags = {"n. POST REPORT API"})
+@Api(tags = {"5. POST REPORT API"})
 public class ReportController {
 
     private final ReportService reportService;

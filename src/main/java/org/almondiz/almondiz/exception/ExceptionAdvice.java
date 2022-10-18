@@ -216,4 +216,25 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 게시글은 이미 신고처리되었습니다.");
     }
 
+    @ExceptionHandler(CommentLikeNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult CommentLikeNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 댓글 좋아요는 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(CommentLikeExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult CommentLikeExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 댓글 좋아요는 이미 존재합니다.");
+    }
+
+    @ExceptionHandler(CommentLikeNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult CommentLikeNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 댓글 좋아요에 대한 접근 권한이 없습니다.");
+    }
+
+
+
+
 }

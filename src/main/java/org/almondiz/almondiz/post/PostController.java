@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value="/api")
-@Api(tags = {"2. POST API"})
+@Api(tags = {"4. POST API"})
 public class PostController {
 
     private final ResponseService responseService;
