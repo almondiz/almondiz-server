@@ -54,6 +54,7 @@ public class ReplyLikeService {
         }
 
         replyLikeRepository.save(newLike);
+        replyService.likeCountUp(reply);
     }
 
     @Transactional
@@ -67,6 +68,7 @@ public class ReplyLikeService {
         replyLike.setStatus(Status.DELETED);
 
         replyLikeRepository.save(replyLike);
+        replyService.likeCountDown(reply);
     }
 
     @Transactional
