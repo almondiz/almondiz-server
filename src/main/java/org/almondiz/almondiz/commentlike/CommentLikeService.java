@@ -53,6 +53,7 @@ public class CommentLikeService {
                                  .build();
         }
         commentLikeRepository.save(newLike);
+        commentService.likeCountUp(comment);
     }
 
     @Transactional
@@ -66,6 +67,7 @@ public class CommentLikeService {
         commentLike.setStatus(Status.DELETED);
 
         commentLikeRepository.save(commentLike);
+        commentService.likeCountDown(comment);
     }
 
     @Transactional

@@ -117,4 +117,22 @@ public class ReplyService {
         reply.setStatus(Status.DELETED);
         replyRepository.save(reply);
     }
+
+    @Transactional
+    public void likeCountUp(Reply reply) {
+        Long pre = reply.getLikedCount();
+
+        reply.setLikedCount(pre+1);
+
+        replyRepository.save(reply);
+    }
+
+    @Transactional
+    public void likeCountDown(Reply reply) {
+        Long pre = reply.getLikedCount();
+
+        reply.setLikedCount(pre-1);
+
+        replyRepository.save(reply);
+    }
 }
