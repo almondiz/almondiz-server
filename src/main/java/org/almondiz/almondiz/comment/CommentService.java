@@ -124,4 +124,22 @@ public class CommentService {
     public Long getCommentCountByPost(Post post) {
         return commentRepository.countByPost(post);
     }
+
+    @Transactional
+    public void likeCountUp(Comment comment) {
+        Long pre = comment.getLikedCount();
+
+        comment.setLikedCount(pre+1);
+
+        commentRepository.save(comment);
+    }
+
+    @Transactional
+    public void likeCountDown(Comment comment) {
+        Long pre = comment.getLikedCount();
+
+        comment.setLikedCount(pre-1);
+
+        commentRepository.save(comment);
+    }
 }
