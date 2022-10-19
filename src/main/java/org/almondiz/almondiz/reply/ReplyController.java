@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api")
-@Api(tags = {"10. REPLY API"})
+@Api(tags = {"6-0. REPLY API"})
 public class ReplyController {
 
     private final ResponseService responseService;
