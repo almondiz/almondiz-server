@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.entity.Comment;
+import org.almondiz.almondiz.reply.ReplyResponseDto;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 
 @Getter
@@ -31,9 +32,9 @@ public class CommentResponseDto {
 
     private boolean like;
 
-    private List<String> reply;
+    private List<ReplyResponseDto> reply;
 
-    public CommentResponseDto(Comment comment, UserSimpleResponseDto user, List<String> reply, boolean like) {
+    public CommentResponseDto(Comment comment, UserSimpleResponseDto user, List<ReplyResponseDto> reply, boolean like) {
         this.commentId = comment.getCommentId();
         this.text = comment.getText();
         this.createdAt = comment.getCreatedAt();

@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api")
-@Api(tags = {"6. POST SCRAP API"})
+@Api(tags = {"4-1. POST SCRAP API"})
 public class PostScrapController {
 
     private final ResponseService responseService;

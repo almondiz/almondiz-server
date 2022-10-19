@@ -1,6 +1,5 @@
 package org.almondiz.almondiz.comment;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +18,8 @@ import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
+import org.almondiz.almondiz.reply.ReplyResponseDto;
+import org.almondiz.almondiz.reply.ReplyService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.entity.User;
@@ -35,6 +36,8 @@ public class CommentService {
     private final UserService userService;
 
     private final CommentLikeRepository commentLikeRepository;
+
+    private final ReplyService replyService;
 
     @Transactional
     public Comment findById(Long commentId) {
@@ -76,7 +79,7 @@ public class CommentService {
 
         UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
-        List<String> reply = new ArrayList<>();
+        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment.getCommentId(), uid);
 
         return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
     }
@@ -91,6 +94,10 @@ public class CommentService {
             throw new CommentNotPermittedException();
         }
 
+        if (!comment.getStatus().equals(Status.ALIVE)) {
+            throw new CommentNotFoundException();
+        }
+
         comment.update(commentRequestDto);
         commentRepository.save(comment);
     }
@@ -103,6 +110,10 @@ public class CommentService {
 
         if (!comment.getUser().equals(user)) {
             throw new CommentNotPermittedException();
+        }
+
+        if (!comment.getStatus().equals(Status.ALIVE)) {
+            throw new CommentNotFoundException();
         }
 
         comment.setStatus(Status.DELETED);
