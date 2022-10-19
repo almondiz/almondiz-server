@@ -58,7 +58,9 @@ public class ReplyService {
     }
 
     @Transactional
-    public List<ReplyResponseDto> findAllReplyByComment(Comment comment, String uid) {
+    public List<ReplyResponseDto> findAllReplyByComment(Long commentId, String uid) {
+        Comment comment = this.findCommentById(commentId);
+
         return replyRepository.findAllByComment(comment)
                               .stream()
                               .map(reply -> this.findReplyDtoById(reply.getId(), uid))

@@ -79,7 +79,7 @@ public class CommentService {
 
         UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
-        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment, uid);
+        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment.getCommentId(), uid);
 
         return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
     }
