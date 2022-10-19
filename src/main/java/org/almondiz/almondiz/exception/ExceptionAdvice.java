@@ -235,6 +235,34 @@ public class ExceptionAdvice {
     }
 
 
+    @ExceptionHandler(ReplyLikeNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReplyLikeNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 대댓글 좋아요는 존재하지 않습니다.");
+    }
 
+    @ExceptionHandler(ReplyLikeExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReplyLikeExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 대댓글 좋아요는 이미 존재합니다.");
+    }
+
+    @ExceptionHandler(ReplyNotPermittedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReplyNotPermittedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 대댓글에 접근할 수 없습니다.");
+    }
+
+    @ExceptionHandler(ReplyNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReplyNotFoundException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 대댓글이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(ReplyExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult ReplyExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 대댓글은 이미 존재합니다.");
+    }
 
 }

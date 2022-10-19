@@ -1,6 +1,5 @@
 package org.almondiz.almondiz.post;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +23,8 @@ import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.postscrap.PostScrapService;
+import org.almondiz.almondiz.reply.ReplyResponseDto;
+import org.almondiz.almondiz.reply.ReplyService;
 import org.almondiz.almondiz.shop.ShopService;
 import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
@@ -57,6 +58,8 @@ public class PostService {
     private final PostScrapService postScrapService;
 
     private final CommentLikeRepository commentLikeRepository;
+
+    private final ReplyService replyService;
 
     @Transactional
     public PostSimpleResponseDto createPost(String uid, PostRequestDto postRequestDto) {
@@ -202,7 +205,7 @@ public class PostService {
 
         UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
-        List<String> reply = new ArrayList<>();
+        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment, uid);
 
         return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
     }
