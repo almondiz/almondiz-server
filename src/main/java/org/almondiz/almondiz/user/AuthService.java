@@ -14,6 +14,7 @@ import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.profileFile.entity.ProfileFile;
 import org.almondiz.almondiz.tag.TagService;
 import org.almondiz.almondiz.tag.entity.Tag;
+import org.almondiz.almondiz.user.dto.TokenUserIdResponseDto;
 import org.almondiz.almondiz.user.dto.UserRegisterDto;
 import org.almondiz.almondiz.user.entity.ProviderType;
 import org.almondiz.almondiz.user.entity.Role;
@@ -68,25 +69,29 @@ public class AuthService implements UserDetailsService {
         return userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
     }
 
-    public Token signIn(String providerUid, ProviderType providerType) {
+    public TokenUserIdResponseDto signIn(String providerUid, ProviderType providerType) {
         User user = userService.findByUid(setUidFromProvider(providerUid, providerType)).orElseThrow(UserNotFoundException::new);
-        return createToken(user.getUid());
+        Token token = createToken(user.getUid());
+        return TokenUserIdResponseDto.builder()
+                                     .token(token)
+                                     .userId(user.getUserId())
+                                     .build();
     }
 
     private String setUidFromProvider(String providerUid, ProviderType providerType) {
-        return providerType.toString()+providerUid;
+        return providerType.toString() + providerUid;
     }
 
     @Transactional
-    public Token signup(UserRegisterDto userRegisterDto) {
+    public TokenUserIdResponseDto signup(UserRegisterDto userRegisterDto) {
         String uid = setUidFromProvider(userRegisterDto.getProviderUid(), userRegisterDto.getProviderType());
 
-        if(userService.findByUid(uid).isPresent()) {
+        if (userService.findByUid(uid).isPresent()) {
             throw new AccountExistedException();
         }
 
         String email = null;
-        if(nonNull(userRegisterDto.getEmail())) {
+        if (nonNull(userRegisterDto.getEmail())) {
             email = ValidStringUtils.getValidEmail(userRegisterDto.getEmail());
         }
 
@@ -98,7 +103,11 @@ public class AuthService implements UserDetailsService {
 
         User user = new User(uid, userRegisterDto.getProviderUid(), userRegisterDto.getEmail(), profileFile, tag, nut, userRegisterDto.getProviderType(), Role.USER, userRegisterDto.getThumb());
         userService.saveUser(user);
-        return createToken(user.getUid());
+        Token token = createToken(user.getUid());
+        return TokenUserIdResponseDto.builder()
+                                     .token(token)
+                                     .userId(user.getUserId())
+                                     .build();
     }
 
     private Token createToken(String uid) {

@@ -27,16 +27,16 @@ public class UserController {
 
     @PostMapping(value = "/user/login")
     @ApiOperation(value = "로그인")
-    public CommonResult logIn(@RequestBody UserLogInDto logInDto) {
-        Token token = authService.signIn(logInDto.getProviderUid(), logInDto.getProviderType());
-        return responseService.getSingleResult(token);
+    public SingleResult<TokenUserIdResponseDto> logIn(@RequestBody UserLogInDto logInDto) {
+        TokenUserIdResponseDto tokenDto = authService.signIn(logInDto.getProviderUid(), logInDto.getProviderType());
+        return responseService.getSingleResult(tokenDto);
     }
 
     @PostMapping(value = "/user")
     @ApiOperation(value = "회원가입")
-    public CommonResult createUser(@RequestBody UserRegisterDto userRegisterDto) {
-        Token token = authService.signup(userRegisterDto);
-        return responseService.getSingleResult(token);
+    public SingleResult<TokenUserIdResponseDto> createUser(@RequestBody UserRegisterDto userRegisterDto) {
+        TokenUserIdResponseDto tokenDto = authService.signup(userRegisterDto);
+        return responseService.getSingleResult(tokenDto);
     }
 
     @ApiImplicitParams({
@@ -44,7 +44,7 @@ public class UserController {
     })
     @GetMapping(value = "/user/token")
     @ApiOperation(value = "AccessToken 재발급", notes = "RefreshToken을 헤더에 넣어 AccessToken을 재발급 받는다")
-    public CommonResult getAccessTokenByRefreshToken(@RequestHeader(value = "AUTH-TOKEN") String refreshToken) {
+    public SingleResult<Token> getAccessTokenByRefreshToken(@RequestHeader(value = "AUTH-TOKEN") String refreshToken) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
         Token token = authService.refreshTokenAccessToken(uid, refreshToken);
