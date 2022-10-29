@@ -125,9 +125,9 @@ public class PostService {
 
     @Transactional
     public PostResponseDto getPostResponseDto(String uid, Long postId) {
-        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleDtoByUid(uid);
-
         Post post = findPostByPostId(postId);
+
+        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleDtoByUid(post.getUser().getUid());
 
         ShopSimpleDto shopSimpleDto = new ShopSimpleDto(post.getShop());
 
