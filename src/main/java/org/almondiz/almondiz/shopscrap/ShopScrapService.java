@@ -56,7 +56,7 @@ public class ShopScrapService {
 
         Optional<ShopScrap> shopScrap = shopScrapRepository.findByUserAndShop(user, shop);
 
-        return shopScrap.isPresent() && !shopScrap.get().getStatus().equals(Status.DELETED);
+        return shopScrap.isPresent();
     }
 
     @Transactional
@@ -64,9 +64,9 @@ public class ShopScrapService {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         return shopScrapRepository.findAllByUser(user)
-                                   .stream()
-                                   .map(this::getShopScrapDto)
-                                   .collect(Collectors.toList());
+                                  .stream()
+                                  .map(this::getShopScrapDto)
+                                  .collect(Collectors.toList());
     }
 
     @Transactional
@@ -74,9 +74,9 @@ public class ShopScrapService {
         Shop shop = shopService.getShopById(shopId);
 
         return shopScrapRepository.findAllByShop(shop)
-                                   .stream()
-                                   .map(this::getShopScrapDto)
-                                   .collect(Collectors.toList());
+                                  .stream()
+                                  .map(this::getShopScrapDto)
+                                  .collect(Collectors.toList());
     }
 
     @Transactional
@@ -88,17 +88,13 @@ public class ShopScrapService {
         Optional<ShopScrap> shopScrap = shopScrapRepository.findByUserAndShop(user, shop);
 
         if (shopScrap.isPresent()) {
-            if (shopScrap.get().getStatus().equals(Status.DELETED)) {
-                shopScrap.get().setStatus(Status.ALIVE);
-            } else {
-                throw new ShopScrapExistedException();
-            }
+            throw new ShopScrapExistedException();
+
         } else {
             shopScrap = Optional.of(shopScrapRepository.save(ShopScrap.builder()
-                                                                        .user(user)
-                                                                        .shop(shop)
-                                                                        .status(Status.ALIVE)
-                                                                        .build()));
+                                                                      .user(user)
+                                                                      .shop(shop)
+                                                                      .build()));
         }
 
         return getShopScrapDto(shopScrapRepository.save(shopScrap.get()));
@@ -114,8 +110,7 @@ public class ShopScrapService {
             throw new ShopScrapNotPermittedException();
         }
 
-        shopScrap.setStatus(Status.DELETED);
-        shopScrapRepository.save(shopScrap);
+        shopScrapRepository.delete(shopScrap);
     }
 
     @Transactional
@@ -126,7 +121,6 @@ public class ShopScrapService {
 
         ShopScrap shopScrap = shopScrapRepository.findByUserAndShop(user, shop).orElseThrow(ShopScrapNotFoundException::new);
 
-        shopScrap.setStatus(Status.DELETED);
-        shopScrapRepository.save(shopScrap);
+        shopScrapRepository.delete(shopScrap);
     }
 }

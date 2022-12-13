@@ -104,11 +104,9 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto deleteUserByUid(String uid){
+    public void deleteUserByUid(String uid){
         User user = findByUid(uid).orElseThrow(UserNotFoundException::new);
-        user.setStatus(Status.DELETED);
-        userRepository.save(user);
-        return getUser(user.getUserId());
+        userRepository.delete(user);
     }
 
     @Transactional

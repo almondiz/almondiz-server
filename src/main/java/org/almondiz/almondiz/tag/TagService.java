@@ -41,7 +41,7 @@ public class TagService {
 
         return tagRepository.save(Tag.builder()
                                      .tagName(tagName)
-                                     .status(Status.ALIVE)
+                                     // .status(Status.ALIVE)
                                      .build());
     }
 
@@ -49,16 +49,14 @@ public class TagService {
     public void deleteById(Long id) {
         Tag tag = tagRepository.findById(id).orElseThrow(TagNotFoundException::new);
 
-        tag.setStatus(Status.DELETED);
-        tagRepository.save(tag);
+        tagRepository.delete(tag);
     }
 
     @Transactional
     public void delete(String tagName) {
         Tag tag = tagRepository.findByTagName(tagName).orElseThrow(TagNotFoundException::new);
 
-        tag.setStatus(Status.DELETED);
-        tagRepository.save(tag);
+        tagRepository.delete(tag);
     }
 
     @Transactional

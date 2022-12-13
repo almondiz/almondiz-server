@@ -35,7 +35,7 @@ public class PostFileService {
                                     .fileUrl(url)
                                     .type(type)
                                     .post(post)
-                                    .status(Status.ALIVE)
+                                    // .status(Status.ALIVE)
                                     .build();
 
         postFileRepository.save(postFile);

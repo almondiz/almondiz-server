@@ -23,8 +23,6 @@ import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.postscrap.PostScrapService;
-import org.almondiz.almondiz.reply.ReplyResponseDto;
-import org.almondiz.almondiz.reply.ReplyService;
 import org.almondiz.almondiz.shop.ShopService;
 import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
@@ -59,8 +57,6 @@ public class PostService {
 
     private final CommentLikeRepository commentLikeRepository;
 
-    private final ReplyService replyService;
-
     @Transactional
     public PostSimpleResponseDto createPost(String uid, PostRequestDto postRequestDto) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
@@ -72,7 +68,7 @@ public class PostService {
                         .content(postRequestDto.getContent())
                         .lati(postRequestDto.getLati())
                         .longi(postRequestDto.getLongi())
-                        .status(Status.ALIVE)
+                        // .status(Status.ALIVE)
                         .build();
 
         Post newPost = postRepository.save(post);
@@ -190,8 +186,7 @@ public class PostService {
             throw new PostNotPermittedException();
         }
 
-        post.setStatus(Status.DELETED);
-        postRepository.save(post);
+        postRepository.delete(post);
     }
 
     @Transactional
@@ -205,9 +200,9 @@ public class PostService {
 
         UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
-        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment.getCommentId(), uid);
+        Long likedCount = commentLikeRepository.countByComment(comment);
 
-        return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
+        return new CommentResponseDto(comment, writer, likedCount, commentLike.isPresent());
     }
 
     @Transactional

@@ -39,21 +39,15 @@ public class CommentLikeService {
 
         CommentLike newLike;
         if (commentLike.isPresent()) {
-            if(commentLike.get().getStatus().equals(Status.ALIVE)) {
-                throw new CommentLikeExistedException();
-            }else{
-                commentLike.get().setStatus(Status.ALIVE);
-                newLike = commentLike.get();
-            }
+            throw new CommentLikeExistedException();
         } else {
             newLike = CommentLike.builder()
                                  .comment(comment)
                                  .user(user)
-                                 .status(Status.ALIVE)
+                                 // .status(Status.ALIVE)
                                  .build();
         }
         commentLikeRepository.save(newLike);
-        commentService.likeCountUp(comment);
     }
 
     @Transactional
@@ -64,10 +58,7 @@ public class CommentLikeService {
 
         CommentLike commentLike = this.findByCommentAndUser(comment, user);
 
-        commentLike.setStatus(Status.DELETED);
-
-        commentLikeRepository.save(commentLike);
-        commentService.likeCountDown(comment);
+        commentLikeRepository.delete(commentLike);
     }
 
     @Transactional

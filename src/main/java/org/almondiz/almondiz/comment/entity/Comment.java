@@ -12,6 +12,8 @@ import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.user.entity.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Builder
 @NoArgsConstructor
@@ -21,14 +23,6 @@ import org.almondiz.almondiz.user.entity.User;
 @Table(name = "Comment_Table")
 public class Comment extends TimeStamped {
 
-    /**
-    inset 되기전 실행됨
-    **/
-    @PrePersist
-    public void prePersist() {
-        this.likedCount = this.likedCount == null ? 0 : this.likedCount;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -36,22 +30,24 @@ public class Comment extends TimeStamped {
     @Column(nullable = false)
     private String text;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    // @Setter
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false)
+    // private Status status;
 
-    @ManyToOne(targetEntity = Post.class)
+    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @Setter
-    @Column(name = "like_count")
-    private Long likedCount;
+    // @Setter
+    // @Column(name = "like_count")
+    // private Long likedCount;
 
     public void update(CommentRequestDto commentRequestDto){
         this.text = commentRequestDto.getText();

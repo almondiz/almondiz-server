@@ -25,7 +25,7 @@ public class TagPostService {
         TagPost tagPost = TagPost.builder()
                                  .post(post)
                                  .tag(tag)
-                                 .status(Status.ALIVE)
+                                 // .status(Status.ALIVE)
                                  .build();
 
         tagPostRepository.save(tagPost);
@@ -35,16 +35,14 @@ public class TagPostService {
     public void deleteById(Long id) {
         TagPost tagPost = tagPostRepository.findById(id).orElseThrow(TagPostNotFoundException::new);
 
-        tagPost.setStatus(Status.DELETED);
-        tagPostRepository.save(tagPost);
+        tagPostRepository.delete(tagPost);
     }
 
     @Transactional
     public void delete(Post post, Tag tag) {
         TagPost tagPost = tagPostRepository.findByPostAndTag(post, tag).orElseThrow(TagPostNotFoundException::new);
 
-        tagPost.setStatus(Status.DELETED);
-        tagPostRepository.save(tagPost);
+        tagPostRepository.delete(tagPost);
     }
 
     @Transactional

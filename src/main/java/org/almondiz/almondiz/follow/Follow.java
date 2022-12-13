@@ -3,6 +3,8 @@ package org.almondiz.almondiz.follow;
 import lombok.*;
 import org.almondiz.almondiz.common.TimeStamped;
 import org.almondiz.almondiz.user.entity.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -18,12 +20,14 @@ public class Follow extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "followerId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User follower;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "followeeId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User followee;
 
     @Setter

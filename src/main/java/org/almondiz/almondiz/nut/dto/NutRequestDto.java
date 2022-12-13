@@ -1,4 +1,4 @@
-package org.almondiz.almondiz.reply;
+package org.almondiz.almondiz.nut.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReplyRequestDto {
-    private String text;
+public class NutRequestDto {
+    private String nutName;
 }

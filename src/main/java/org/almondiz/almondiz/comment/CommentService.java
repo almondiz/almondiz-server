@@ -18,8 +18,6 @@ import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
-import org.almondiz.almondiz.reply.ReplyResponseDto;
-import org.almondiz.almondiz.reply.ReplyService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.entity.User;
@@ -37,8 +35,6 @@ public class CommentService {
 
     private final CommentLikeRepository commentLikeRepository;
 
-    private final ReplyService replyService;
-
     @Transactional
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
@@ -53,10 +49,10 @@ public class CommentService {
 
         Comment comment = commentRepository.save(Comment.builder()
                                                         .text(commentRequestDto.getText())
-                                                        .status(Status.ALIVE)
+                                                        // .status(Status.ALIVE)
                                                         .post(post)
                                                         .user(user)
-                                                        .likedCount(0L)
+                                                        // .likedCount(0L)
                                                         .build());
     }
 
@@ -79,9 +75,9 @@ public class CommentService {
 
         UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
 
-        List<ReplyResponseDto> reply = replyService.findAllReplyByComment(comment.getCommentId(), uid);
+        Long likedCount = commentLikeRepository.countByComment(comment);
 
-        return new CommentResponseDto(comment, writer, reply, commentLike.isPresent());
+        return new CommentResponseDto(comment, writer, likedCount, commentLike.isPresent());
     }
 
     @Transactional
@@ -92,10 +88,6 @@ public class CommentService {
 
         if (!comment.getUser().equals(user)) {
             throw new CommentNotPermittedException();
-        }
-
-        if (!comment.getStatus().equals(Status.ALIVE)) {
-            throw new CommentNotFoundException();
         }
 
         comment.update(commentRequestDto);
@@ -112,12 +104,8 @@ public class CommentService {
             throw new CommentNotPermittedException();
         }
 
-        if (!comment.getStatus().equals(Status.ALIVE)) {
-            throw new CommentNotFoundException();
-        }
 
-        comment.setStatus(Status.DELETED);
-        commentRepository.save(comment);
+        commentRepository.delete(comment);
     }
 
     @Transactional
@@ -125,21 +113,4 @@ public class CommentService {
         return commentRepository.countByPost(post);
     }
 
-    @Transactional
-    public void likeCountUp(Comment comment) {
-        Long pre = comment.getLikedCount();
-
-        comment.setLikedCount(pre+1);
-
-        commentRepository.save(comment);
-    }
-
-    @Transactional
-    public void likeCountDown(Comment comment) {
-        Long pre = comment.getLikedCount();
-
-        comment.setLikedCount(pre-1);
-
-        commentRepository.save(comment);
-    }
 }

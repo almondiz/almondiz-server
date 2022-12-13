@@ -7,4 +7,6 @@ public interface NutRepository extends JpaRepository<Nut, Long> {
 
     Optional<Nut> findById(Long nutId);
 
+    Optional<Nut> findByNutName(String nutName);
+
 }

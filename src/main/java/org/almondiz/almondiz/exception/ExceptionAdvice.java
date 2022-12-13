@@ -265,4 +265,10 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 대댓글은 이미 존재합니다.");
     }
 
+    @ExceptionHandler(NutExistedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult NutExistedException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("해당 너트가 이미 존재합니다.");
+    }
+
 }

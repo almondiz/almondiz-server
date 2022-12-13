@@ -21,9 +21,8 @@ public class Tag extends TimeStamped {
     @Column(nullable = false)
     private String tagName;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
-
+    // @Setter
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false)
+    // private Status status;
 }

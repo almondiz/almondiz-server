@@ -48,16 +48,12 @@ public class PostScrapService {
         Optional<PostScrap> postScrap = postScrapRepository.findByUserAndPost(user, post);
 
         if (postScrap.isPresent()) {
-            if (postScrap.get().getStatus().equals(Status.DELETED)) {
-                postScrap.get().setStatus(Status.ALIVE);
-            } else {
-                throw new PostScrapExistedException();
-            }
+            throw new PostScrapExistedException();
         } else {
             postScrap = Optional.of(postScrapRepository.save(PostScrap.builder()
                                                                       .user(user)
                                                                       .post(post)
-                                                                      .status(Status.ALIVE)
+                                                                      // .status(Status.ALIVE)
                                                                       .build()));
         }
 
@@ -105,12 +101,11 @@ public class PostScrapService {
 
         PostScrap postScrap = this.findPostScrapById(scrapId);
 
-        if(!postScrap.getUser().equals(user)){
+        if (!postScrap.getUser().equals(user)) {
             throw new PostScrapNotPermittedException();
         }
 
-        postScrap.setStatus(Status.DELETED);
-        postScrapRepository.save(postScrap);
+        postScrapRepository.delete(postScrap);
     }
 
     @Transactional
@@ -121,7 +116,6 @@ public class PostScrapService {
 
         PostScrap postScrap = postScrapRepository.findByUserAndPost(user, post).get();
 
-        postScrap.setStatus(Status.DELETED);
-        postScrapRepository.save(postScrap);
+        postScrapRepository.delete(postScrap);
     }
 }
