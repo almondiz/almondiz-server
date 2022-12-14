@@ -32,7 +32,7 @@ public class Post extends TimeStamped {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Shop.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "shopId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Shop shop;
