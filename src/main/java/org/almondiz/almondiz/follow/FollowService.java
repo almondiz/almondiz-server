@@ -1,10 +1,7 @@
 package org.almondiz.almondiz.follow;
 
 import lombok.RequiredArgsConstructor;
-import org.almondiz.almondiz.exception.exception.FollowExistedException;
-import org.almondiz.almondiz.exception.exception.FollowNotFoundException;
-import org.almondiz.almondiz.exception.exception.FollowNotPermittedException;
-import org.almondiz.almondiz.exception.exception.UserNotFoundException;
+import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.profileFile.ProfileFileService;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.entity.User;
@@ -30,6 +27,10 @@ public class FollowService {
 
         User followee = userService.findById(followRequestDto.getFolloweeId()).orElseThrow(UserNotFoundException::new);
 
+        if(follower.equals(followee)){
+            throw new FollowMySelfException();
+        }
+
         if (followRepository.findByFollowerAndFollowee(follower, followee).isPresent()) {
             throw new FollowExistedException();
         }
@@ -44,16 +45,20 @@ public class FollowService {
     @Transactional
     public void delete(String uid, Long followId) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
         Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
+
         if (!follow.getFollower().equals(user)) {
             throw new FollowNotPermittedException();
         }
+
         followRepository.deleteById(followId);
     }
 
     @Transactional
     public List<FollowerResponseDto> findAllFollowers(String uid) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
         return followRepository.findAllByFollowee(user)
                                .stream()
                                .map(follow -> FollowerResponseDto.builder()
@@ -69,6 +74,7 @@ public class FollowService {
     @Transactional
     public List<FollowingResponseDto> findAllFollowings(String uid) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
         return followRepository.findAllByFollower(user)
                                .stream()
                                .map(follow -> FollowingResponseDto.builder()
@@ -85,10 +91,13 @@ public class FollowService {
     @Transactional
     public void setAlias(String uid, Long followId, String alias) {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
         Follow follow = followRepository.findById(followId).orElseThrow(FollowNotFoundException::new);
+
         if (!follow.getFollower().equals(user)) {
             throw new FollowNotPermittedException();
         }
+
         follow.updateAlias(alias);
         followRepository.save(follow);
     }

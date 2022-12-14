@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 import org.almondiz.almondiz.response.CommonResult;
+import org.almondiz.almondiz.response.ListResult;
 import org.almondiz.almondiz.response.ResponseService;
+import org.almondiz.almondiz.response.SingleResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ public class FollowController {
         @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @PostMapping("/follow")
-    public CommonResult create(@RequestBody FollowRequestDto requestDto) {
+    public SingleResult<Follow> create(@RequestBody FollowRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
         return responseService.getSingleResult(followService.create(uid, requestDto));
@@ -56,7 +58,7 @@ public class FollowController {
         @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @GetMapping("/api/followings")
-    public CommonResult getAllFollowings() {
+    public ListResult<FollowingResponseDto> getAllFollowings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
         return responseService.getListResult(followService.findAllFollowings(uid));
@@ -66,7 +68,7 @@ public class FollowController {
         @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @GetMapping("/api/followers")
-    public CommonResult getAllFollowers() {
+    public ListResult<FollowerResponseDto> getAllFollowers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String uid = authentication.getName();
         return responseService.getListResult(followService.findAllFollowers(uid));

@@ -271,4 +271,10 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("해당 너트가 이미 존재합니다.");
     }
 
+    @ExceptionHandler(FollowMySelfException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult FollowMySelfException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("자신을 팔로우할 수 없습니다.");
+    }
+
 }
