@@ -34,17 +34,12 @@ public class ReportService {
 
         Report newReport;
         if (report.isPresent()) {
-            if (report.get().getStatus().equals(Status.ALIVE)) {
-                throw new ReportExistedException();
-            } else {
-                report.get().setStatus(Status.ALIVE);
-                newReport = report.get();
-            }
+            throw new ReportExistedException();
         } else {
             newReport = Report.builder()
                               .post(post)
                               .user(user)
-                              .status(Status.ALIVE)
+                              // .status(Status.ALIVE)
                               .text(requestDto.getText())
                               .type(requestDto.getType())
                               .build();

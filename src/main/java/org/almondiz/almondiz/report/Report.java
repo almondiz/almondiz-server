@@ -29,10 +29,10 @@ public class Report extends TimeStamped {
     @JoinColumn(name = "userId")
     private User user;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    // @Setter
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false)
+    // private Status status;
 
     private String text;
 
