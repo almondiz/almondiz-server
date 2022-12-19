@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.almondiz.almondiz.common.Relation;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
 import org.almondiz.almondiz.tag.dto.TagResponseDto;
@@ -29,6 +30,8 @@ public class PostResponseDto {
 
     private UserSimpleResponseDto user;
 
+    private Relation relation;
+
     private ShopSimpleDto shop;
 
     private List<TagResponseDto> tags;
@@ -43,12 +46,13 @@ public class PostResponseDto {
 
     private Long commentCount;
 
-    public PostResponseDto(Post post, List<String> postFileImgUrls, UserSimpleResponseDto user, ShopSimpleDto shop, List<TagResponseDto> tagList,
+    public PostResponseDto(Post post, List<String> postFileImgUrls, UserSimpleResponseDto user, Relation relation, ShopSimpleDto shop, List<TagResponseDto> tagList,
                            Long scrappedCount, boolean scrap, Long commentCount) {
         this.postId = post.getPostId();
         this.text = post.getContent();
         this.postFileImgUrls = postFileImgUrls;
         this.user = user;
+        this.relation = relation;
         this.shop = shop;
         this.tags = tagList;
         this.createdAt = post.getCreatedAt();

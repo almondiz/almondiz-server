@@ -101,4 +101,9 @@ public class FollowService {
         follow.updateAlias(alias);
         followRepository.save(follow);
     }
+
+    @Transactional
+    public boolean isFollow(User follower, User followee) {
+        return followRepository.findByFollowerAndFollowee(follower, followee).isPresent();
+    }
 }
