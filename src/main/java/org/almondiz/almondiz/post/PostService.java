@@ -11,11 +11,14 @@ import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.commentlike.CommentLike;
 import org.almondiz.almondiz.commentlike.CommentLikeRepository;
+import org.almondiz.almondiz.common.Relation;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotFoundException;
 import org.almondiz.almondiz.exception.exception.PostNotPermittedException;
+import org.almondiz.almondiz.follow.Follow;
+import org.almondiz.almondiz.follow.FollowService;
 import org.almondiz.almondiz.post.dto.PostSimpleResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -56,6 +59,8 @@ public class PostService {
     private final PostScrapService postScrapService;
 
     private final CommentLikeRepository commentLikeRepository;
+
+    private final FollowService followService;
 
     @Transactional
     public PostSimpleResponseDto createPost(String uid, PostRequestDto postRequestDto) {
@@ -123,7 +128,23 @@ public class PostService {
     public PostResponseDto getPostResponseDto(String uid, Long postId) {
         Post post = findPostByPostId(postId);
 
-        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleDtoByUid(post.getUser().getUid());
+        User writer = post.getUser();
+
+        UserSimpleResponseDto writerSimpleResponseDto = userService.getUserSimpleDtoByUid(writer.getUid());
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Relation relation = Relation.OTHER;
+
+        if(writer.equals(user)){
+            relation = Relation.ME;
+        }
+
+        boolean isFollow = followService.isFollow(user, writer);
+
+        if(isFollow) {
+            relation = Relation.FOLLOWEE;
+        }
 
         ShopSimpleDto shopSimpleDto = new ShopSimpleDto(post.getShop());
 
@@ -137,7 +158,7 @@ public class PostService {
 
         Long commentCount = commentRepository.countByPost(post);
 
-        return new PostResponseDto(post, postFileImgUrls, userSimpleResponseDto, shopSimpleDto, tagList, scrappedCount, scrap, commentCount);
+        return new PostResponseDto(post, postFileImgUrls, writerSimpleResponseDto, relation, shopSimpleDto, tagList, scrappedCount, scrap, commentCount);
     }
 
     @Transactional
@@ -189,31 +210,31 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    @Transactional
-    public CommentResponseDto getCommentResponseDto(Long commentId, String uid) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-            CommentNotFoundException::new);
+    // @Transactional
+    // public CommentResponseDto getCommentResponseDto(Long commentId, String uid) {
+    //     Comment comment = commentRepository.findById(commentId).orElseThrow(
+    //         CommentNotFoundException::new);
+    //
+    //     User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+    //
+    //     Optional<CommentLike> commentLike = commentLikeRepository.findByCommentAndUser(comment, user);
+    //
+    //     UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+    //
+    //     Long likedCount = commentLikeRepository.countByComment(comment);
+    //
+    //     return new CommentResponseDto(comment, writer, likedCount, commentLike.isPresent());
+    // }
 
-        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
-
-        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentAndUser(comment, user);
-
-        UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
-
-        Long likedCount = commentLikeRepository.countByComment(comment);
-
-        return new CommentResponseDto(comment, writer, likedCount, commentLike.isPresent());
-    }
-
-    @Transactional
-    public CommentResponseDto getBestCommentByPostId(Long postId, String uid) {
-        Post post = this.findPostByPostId(postId);
-        List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
-
-        if (commentList.size() == 0) {
-            return null;
-        }
-
-        return this.getCommentResponseDto(commentList.get(0).getCommentId(), uid);
-    }
+    // @Transactional
+    // public CommentResponseDto getBestCommentByPostId(Long postId, String uid) {
+    //     Post post = this.findPostByPostId(postId);
+    //     List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
+    //
+    //     if (commentList.size() == 0) {
+    //         return null;
+    //     }
+    //
+    //     return this.getCommentResponseDto(commentList.get(0).getCommentId(), uid);
+    // }
 }
