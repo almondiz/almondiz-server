@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.almondiz.almondiz.comment.entity.Comment;
+import org.almondiz.almondiz.common.Relation;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 
 @Getter
@@ -22,8 +23,9 @@ public class CommentResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private UserSimpleResponseDto user;
+
+    private Relation relation;
 
     private String text;
 
@@ -31,11 +33,12 @@ public class CommentResponseDto {
 
     private boolean like;
 
-    public CommentResponseDto(Comment comment, UserSimpleResponseDto user, Long likedCount, boolean like) {
+    public CommentResponseDto(Comment comment, UserSimpleResponseDto user, Relation relation, Long likedCount, boolean like) {
         this.commentId = comment.getCommentId();
         this.text = comment.getText();
         this.createdAt = comment.getCreatedAt();
         this.user = user;
+        this.relation = relation;
         this.likedCount = likedCount;
         this.like = like;
     }

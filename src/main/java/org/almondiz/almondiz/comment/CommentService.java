@@ -12,10 +12,12 @@ import org.almondiz.almondiz.comment.entity.Comment;
 import org.almondiz.almondiz.comment.entity.CommentRepository;
 import org.almondiz.almondiz.commentlike.CommentLike;
 import org.almondiz.almondiz.commentlike.CommentLikeRepository;
+import org.almondiz.almondiz.common.Relation;
 import org.almondiz.almondiz.common.Status;
 import org.almondiz.almondiz.exception.exception.UserNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
 import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
+import org.almondiz.almondiz.follow.FollowService;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.user.UserService;
@@ -34,6 +36,8 @@ public class CommentService {
     private final UserService userService;
 
     private final CommentLikeRepository commentLikeRepository;
+
+    private final FollowService followService;
 
     @Transactional
     public Comment findById(Long commentId) {
@@ -73,11 +77,23 @@ public class CommentService {
 
         Optional<CommentLike> commentLike = commentLikeRepository.findByCommentAndUser(comment, user);
 
-        UserSimpleResponseDto writer = userService.getUserAsWriterResponseDto(comment.getUser().getUserId());
+        User writer = comment.getUser();
+
+        UserSimpleResponseDto writerDto = userService.getUserAsWriterResponseDto(writer.getUserId());
+
+        Relation relation = Relation.OTHER;
+
+        if(writer.equals(user)){
+            relation = Relation.ME;
+        }
+
+        if(followService.isFollow(user, writer)){
+            relation = Relation.FOLLOWEE;
+        }
 
         Long likedCount = commentLikeRepository.countByComment(comment);
 
-        return new CommentResponseDto(comment, writer, likedCount, commentLike.isPresent());
+        return new CommentResponseDto(comment, writerDto, relation, likedCount, commentLike.isPresent());
     }
 
     @Transactional
