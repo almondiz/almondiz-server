@@ -22,6 +22,8 @@ import org.almondiz.almondiz.reply.dto.ReplyRequestDto;
 import org.almondiz.almondiz.reply.dto.ReplyResponseDto;
 import org.almondiz.almondiz.reply.entity.Reply;
 import org.almondiz.almondiz.reply.entity.ReplyRepository;
+import org.almondiz.almondiz.reply.replylike.ReplyLike;
+import org.almondiz.almondiz.reply.replylike.ReplyLikeRepository;
 import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
@@ -43,6 +45,8 @@ public class CommentService {
     private final FollowService followService;
 
     private final ReplyRepository replyRepository;
+
+    private final ReplyLikeRepository replyLikeRepository;
 
     @Transactional
     public Comment findById(Long commentId) {
@@ -161,10 +165,9 @@ public class CommentService {
             relation = Relation.FOLLOWEE;
         }
 
-        // 고치기
-        Long likedCount = 0L;
+        Long likedCount = replyLikeRepository.countByReply(reply);
 
-        boolean like = false;
+        boolean like = this.isReplyLike(reply.getReplyId(), user.getUid());
 
         return new ReplyResponseDto(reply, writerDto, relation, likedCount, like);
     }
@@ -179,10 +182,10 @@ public class CommentService {
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
         Reply reply = replyRepository.save(Reply.builder()
-                                               .text(requestDto.getText())
-                                               .post(post)
-                                               .comment(comment)
-                                               .user(user)
+                                                .text(requestDto.getText())
+                                                .post(post)
+                                                .comment(comment)
+                                                .user(user)
                                                 .build());
 
         return reply;
@@ -195,7 +198,7 @@ public class CommentService {
 
         Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
 
-        if(!reply.getUser().equals(user)){
+        if (!reply.getUser().equals(user)) {
             throw new ReplyNotPermittedException();
         }
 
@@ -210,10 +213,58 @@ public class CommentService {
 
         Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
 
-        if(!reply.getUser().equals(user)){
+        if (!reply.getUser().equals(user)) {
             throw new ReplyNotPermittedException();
         }
 
         replyRepository.delete(reply);
+    }
+
+    @Transactional
+    public ReplyLike findReplyLikeByReplyAndUser(Reply reply, User user) {
+        return replyLikeRepository.findByReplyAndUser(reply, user).orElseThrow(ReplyLikeNotFoundException::new);
+    }
+
+    @Transactional
+    public ReplyLike createReplyLike(Long replyId, String uid) {
+
+        Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Optional<ReplyLike> replyLike = replyLikeRepository.findByReplyAndUser(reply, user);
+
+        ReplyLike newLike;
+        if (replyLike.isPresent()) {
+            throw new ReplyLikeExistedException();
+        } else {
+            newLike = ReplyLike.builder()
+                               .reply(reply)
+                               .user(user)
+                               .build();
+        }
+
+        return replyLikeRepository.save(newLike);
+    }
+
+    @Transactional
+    public void delete(Long replyId, String uid) {
+        Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        ReplyLike replyLike = this.findReplyLikeByReplyAndUser(reply, user);
+
+        replyLikeRepository.delete(replyLike);
+    }
+
+    @Transactional
+    public boolean isReplyLike(Long replyId, String uid) {
+
+        Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        return replyLikeRepository.findByReplyAndUser(reply, user).isPresent();
     }
 }
