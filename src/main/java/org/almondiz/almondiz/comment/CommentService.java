@@ -14,13 +14,16 @@ import org.almondiz.almondiz.commentlike.CommentLike;
 import org.almondiz.almondiz.commentlike.CommentLikeRepository;
 import org.almondiz.almondiz.common.Relation;
 import org.almondiz.almondiz.common.Status;
-import org.almondiz.almondiz.exception.exception.UserNotFoundException;
-import org.almondiz.almondiz.exception.exception.CommentNotFoundException;
-import org.almondiz.almondiz.exception.exception.CommentNotPermittedException;
+import org.almondiz.almondiz.exception.exception.*;
 import org.almondiz.almondiz.follow.FollowService;
 import org.almondiz.almondiz.post.PostService;
 import org.almondiz.almondiz.post.entity.Post;
+import org.almondiz.almondiz.reply.dto.ReplyRequestDto;
+import org.almondiz.almondiz.reply.dto.ReplyResponseDto;
+import org.almondiz.almondiz.reply.entity.Reply;
+import org.almondiz.almondiz.reply.entity.ReplyRepository;
 import org.almondiz.almondiz.user.UserService;
+import org.almondiz.almondiz.user.dto.UserResponseDto;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,8 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     private final FollowService followService;
+
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public Comment findById(Long commentId) {
@@ -83,18 +88,21 @@ public class CommentService {
 
         Relation relation = Relation.OTHER;
 
-        if(writer.equals(user)){
+        if (writer.equals(user)) {
             relation = Relation.ME;
         }
 
-        if(followService.isFollow(user, writer)){
+        if (followService.isFollow(user, writer)) {
             relation = Relation.FOLLOWEE;
         }
 
         Long likedCount = commentLikeRepository.countByComment(comment);
 
-        return new CommentResponseDto(comment, writerDto, relation, likedCount, commentLike.isPresent());
+        List<ReplyResponseDto> responses = findAllReplyByComment(comment, user);
+
+        return new CommentResponseDto(comment, writerDto, relation, likedCount, commentLike.isPresent(), responses);
     }
+
 
     @Transactional
     public void update(String uid, Long commentId, CommentRequestDto commentRequestDto) {
@@ -129,4 +137,83 @@ public class CommentService {
         return commentRepository.countByPost(post);
     }
 
+    @Transactional
+    public List<ReplyResponseDto> findAllReplyByComment(Comment comment, User user) {
+        return replyRepository.findAllByComment(comment)
+                              .stream().map(reply -> this.getReplyResponseDto(reply, user))
+                              .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public ReplyResponseDto getReplyResponseDto(Reply reply, User user) {
+        User writer = reply.getUser();
+
+        UserSimpleResponseDto writerDto = userService.getUserAsWriterResponseDto(writer.getUserId());
+
+        Relation relation = Relation.OTHER;
+
+        if (writer.equals(user)) {
+            relation = Relation.ME;
+        }
+
+        if (followService.isFollow(user, writer)) {
+            relation = Relation.FOLLOWEE;
+        }
+
+        // 고치기
+        Long likedCount = 0L;
+
+        boolean like = false;
+
+        return new ReplyResponseDto(reply, writerDto, relation, likedCount, like);
+    }
+
+    @Transactional
+    public Reply createReply(String uid, Long commentId, ReplyRequestDto requestDto) {
+
+        Comment comment = this.findById(commentId);
+
+        Post post = comment.getPost();
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Reply reply = replyRepository.save(Reply.builder()
+                                               .text(requestDto.getText())
+                                               .post(post)
+                                               .comment(comment)
+                                               .user(user)
+                                                .build());
+
+        return reply;
+    }
+
+    @Transactional
+    public Reply updateReply(String uid, Long replyId, ReplyRequestDto requestDto) {
+
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
+
+        if(!reply.getUser().equals(user)){
+            throw new ReplyNotPermittedException();
+        }
+
+        reply.update(requestDto);
+
+        return replyRepository.save(reply);
+    }
+
+    @Transactional
+    public void deleteReply(String uid, Long replyId) {
+        User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+        Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
+
+        if(!reply.getUser().equals(user)){
+            throw new ReplyNotPermittedException();
+        }
+
+        replyRepository.delete(reply);
+    }
 }
