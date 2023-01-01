@@ -248,7 +248,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(Long replyId, String uid) {
+    public void deleteReplyLike(Long replyId, String uid) {
         Reply reply = replyRepository.findById(replyId).orElseThrow(ReplyNotFoundException::new);
 
         User user = userService.findByUid(uid).orElseThrow(UserNotFoundException::new);
