@@ -26,6 +26,7 @@ import org.almondiz.almondiz.post.entity.Post;
 import org.almondiz.almondiz.post.entity.PostRepository;
 import org.almondiz.almondiz.postFile.PostFileService;
 import org.almondiz.almondiz.postscrap.PostScrapService;
+import org.almondiz.almondiz.reply.entity.ReplyRepository;
 import org.almondiz.almondiz.shop.ShopService;
 import org.almondiz.almondiz.shop.entity.Shop;
 import org.almondiz.almondiz.shop.entity.ShopSimpleDto;
@@ -61,6 +62,8 @@ public class PostService {
     private final CommentLikeRepository commentLikeRepository;
 
     private final FollowService followService;
+
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public PostSimpleResponseDto createPost(String uid, PostRequestDto postRequestDto) {
@@ -156,7 +159,7 @@ public class PostService {
 
         boolean scrap = postScrapService.isScrap(uid, postId);
 
-        Long commentCount = commentRepository.countByPost(post);
+        Long commentCount = commentRepository.countByPost(post)+replyRepository.countByPost(post);
 
         return new PostResponseDto(post, postFileImgUrls, writerSimpleResponseDto, relation, shopSimpleDto, tagList, scrappedCount, scrap, commentCount);
     }
