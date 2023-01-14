@@ -3,6 +3,7 @@ package org.almondiz.almondiz.post.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +22,6 @@ public class PostRequestDto {
 
     private List<Long> tags;
 
-    private List<String> images;
+    private List<MultipartFile> images;
 
 }

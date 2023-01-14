@@ -277,4 +277,10 @@ public class ExceptionAdvice {
         return responseService.getFailResultWithMsg("자신을 팔로우할 수 없습니다.");
     }
 
+    @ExceptionHandler(FileInvalidException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult FileInvalidException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResultWithMsg("파일이 유효하지 않습니다.");
+    }
+
 }
