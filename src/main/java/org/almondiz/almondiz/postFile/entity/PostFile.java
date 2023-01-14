@@ -21,8 +21,8 @@ public class PostFile extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fileId;
 
-    // 필요시 enum으로 변경
-    private String type;
+    // // 필요시 enum으로 변경
+    // private String type;
 
     private String fileUrl;
 

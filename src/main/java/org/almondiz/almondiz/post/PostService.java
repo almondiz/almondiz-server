@@ -38,6 +38,7 @@ import org.almondiz.almondiz.user.UserService;
 import org.almondiz.almondiz.user.dto.UserSimpleResponseDto;
 import org.almondiz.almondiz.user.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +84,7 @@ public class PostService {
 
         postRequestDto.getTags().forEach(tagId -> this.createTagPost(tagId, newPost));
 
-        postRequestDto.getImages().forEach(url -> this.createPostFile(url, post));
+        createPostFile(postRequestDto.getImages(), post);
 
         return getPostSimpleDtoById(newPost.getPostId());
     }
@@ -94,8 +95,8 @@ public class PostService {
         tagPostService.create(post, tag);
     }
 
-    private void createPostFile(String imageUrl, Post post) {
-        postFileService.create(imageUrl, "url", post);
+    private void createPostFile(List<MultipartFile> files, Post post) {
+        postFileService.create(files, post);
     }
 
     @Transactional
