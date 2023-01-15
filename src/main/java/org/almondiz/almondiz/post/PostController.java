@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.almondiz.almondiz.post.dto.PostLocationDto;
 import org.almondiz.almondiz.post.dto.PostSimpleResponseDto;
 import org.almondiz.almondiz.post.dto.PostRequestDto;
 import org.almondiz.almondiz.post.dto.PostResponseDto;
@@ -54,6 +55,18 @@ public class PostController {
         String uid = authentication.getName();
 
         return responseService.getListResult(postService.getAllPosts(uid));
+    }
+
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
+    @GetMapping(value="/posts/near")
+    @ApiOperation(value = "5km 이하 가까운 post 조회")
+    public ListResult<PostResponseDto> findNearPosts(@RequestBody PostLocationDto postLocationDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String uid = authentication.getName();
+
+        return responseService.getListResult(postService.getNearPosts(uid, postLocationDto.getLati(), postLocationDto.getLongi()));
     }
 
     @ApiImplicitParams({
