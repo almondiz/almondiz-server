@@ -1,5 +1,6 @@
 package org.almondiz.almondiz.post;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +108,21 @@ public class PostService {
                              .collect(Collectors.toList());
     }
 
+    // 5km 이하 post 목록 조회
+    @Transactional
+    public List<PostResponseDto> getNearPosts(String uid, Double userLat, Double userLongi) {
+        List<PostResponseDto> posts = new ArrayList<>();
+
+        postRepository.findAll()
+                      .stream()
+                      .filter(post -> (this.getDistance(userLat, userLongi, post.getLati(), post.getLongi()) <= 5))
+                      .forEach(post -> {
+                          posts.add(this.getPostResponseDto(uid, post.getPostId()));
+                      });
+
+        return posts;
+    }
+
     @Transactional
     public Post findPostByPostId(Long postId) {
         return postRepository.findByPostId(postId).orElseThrow(PostNotFoundException::new);
@@ -140,13 +156,13 @@ public class PostService {
 
         Relation relation = Relation.OTHER;
 
-        if(writer.equals(user)){
+        if (writer.equals(user)) {
             relation = Relation.ME;
         }
 
         boolean isFollow = followService.isFollow(user, writer);
 
-        if(isFollow) {
+        if (isFollow) {
             relation = Relation.FOLLOWEE;
         }
 
@@ -160,7 +176,7 @@ public class PostService {
 
         boolean scrap = postScrapService.isScrap(uid, postId);
 
-        Long commentCount = commentRepository.countByPost(post)+replyRepository.countByPost(post);
+        Long commentCount = commentRepository.countByPost(post) + replyRepository.countByPost(post);
 
         return new PostResponseDto(post, postFileImgUrls, writerSimpleResponseDto, relation, shopSimpleDto, tagList, scrappedCount, scrap, commentCount);
     }
@@ -212,6 +228,27 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    // km 가준
+    private Double getDistance(Double lat, Double lnt, Double lat2, Double lnt2) {
+        double theta = lnt - lnt2;
+        double dist = Math.sin(deg2rad(lat)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515 * 1609.344;
+
+        return dist / 1000;
+    }
+
+    //10진수를 radian(라디안)으로 변환
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    //radian(라디안)을 10진수로 변환
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
     }
 
     // @Transactional
